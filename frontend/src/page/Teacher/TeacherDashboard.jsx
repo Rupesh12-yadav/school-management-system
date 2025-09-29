@@ -1,41 +1,47 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion"; // eslint-disable-line
-import { FaUserPlus, FaTrash, FaCalendarAlt } from "react-icons/fa";
-import { MdAssessment, MdCampaign } from "react-icons/md";
+import { FaBookOpen, FaClipboardList, FaUpload } from "react-icons/fa";
+import { MdCampaign, MdEventNote } from "react-icons/md";
+import { IoIosPaper } from "react-icons/io";
 import { FiLogOut } from "react-icons/fi";
-import { useNavigate } from "react-router-dom"; // ✅ Navigate ko replace kiya useNavigate se
+import { Navigate } from "react-router-dom";
 
-export default function AdminDashboard({ admin, setUser }) {
-  const [active, setActive] = useState("Dashboard");
-  const navigate = useNavigate();
+export default function TeacherDashboard({setUser}) {
+  const [active, setActive] = useState("Teacher Dashboard");
+
+
+    const handleLogout = () => {
+    setUser(null);
+    Navigate("/");
+  };
 
   const menuItems = [
-    { name: "Add Student/Teacher", icon: <FaUserPlus />, key: "add" },
-    { name: "Delete Student/Teacher", icon: <FaTrash />, key: "delete" },
-    { name: "View Attendance Report", icon: <MdAssessment />, key: "attendance" },
-    { name: "Create Notice", icon: <MdCampaign />, key: "notice" },
-    { name: "Manage Holidays", icon: <FaCalendarAlt />, key: "holidays" },
+    { name: "Add Homework", icon: <FaBookOpen />, key: "homework" },
+    { name: "View Notice", icon: <MdCampaign />, key: "notice" },
+    { name: "Mark Attendance", icon: <MdEventNote />, key: "attendance" },
+    { name: "Post Exam", icon: <IoIosPaper />, key: "exam" },
+    { name: "Leave Request", icon: <FaClipboardList />, key: "leave" },
+    { name: "Upload Marks", icon: <FaUpload />, key: "marks" },
   ];
-
-  const handleLogout = () => {
-    setUser(null);
-    navigate("/"); // ✅ sahi tarika
-  };
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-gray-100">
       {/* Sidebar */}
       <aside className="w-full md:w-64 bg-white shadow-md flex flex-col items-center py-6">
         <motion.img
-          src={admin.image}
+          src="https://via.placeholder.com/100"
           alt="Profile"
           className="w-20 h-20 md:w-24 md:h-24 rounded-full mb-4"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.5 }}
         />
-        <h2 className="font-bold text-base md:text-lg">{admin.name}</h2>
-        <p className="text-gray-500 mb-6 text-sm md:text-base">{admin.role}</p>
+        <h2 className="font-bold text-base md:text-lg">RAVI KUMAR</h2>
+        <p className="text-gray-500 text-sm md:text-base">Skill: Mathematics</p>
+        <p className="text-gray-500 text-sm md:text-base">Class: 10th A</p>
+        <p className="text-gray-500 text-sm md:text-base mb-6 md:mb-8">
+          Address: Bhopal, MP
+        </p>
 
         <nav className="flex-1 w-full px-2 md:px-4 space-y-2 md:space-y-3">
           {menuItems.map((item) => (
@@ -62,7 +68,7 @@ export default function AdminDashboard({ admin, setUser }) {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-6 gap-4">
           <h1 className="text-2xl md:text-3xl font-bold">{active}</h1>
           <motion.button
-            onClick={handleLogout}
+          onClick={handleLogout}
             className="flex items-center gap-2 px-3 md:px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-100 text-sm md:text-base"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

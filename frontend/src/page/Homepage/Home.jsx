@@ -13,15 +13,15 @@ const Home = () => {
         <img
           src={background}
           alt="Hero"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover brightness-75" // 👈 background thoda dark
         />
-        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="absolute inset-0 bg-black/40"></div> {/* 👈 overlay ko thoda dark kiya */}
       </div>
 
       {/* Overlay Text + Button */}
-      <div className="relative z-10 text-center">
+      <div className="relative z-10 text-center px-4">
         <motion.h1
-          className="text-4xl md:text-6xl font-extrabold mb-4 text-black drop-shadow-2xl"
+          className="text-4xl md:text-6xl font-extrabold mb-4 text-white drop-shadow-2xl" // 👈 text ko white kar diya
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
@@ -30,7 +30,7 @@ const Home = () => {
         </motion.h1>
 
         <motion.h5
-          className="text-lg md:text-2xl font-medium text-gray-800 drop-shadow-xl"
+          className="text-lg md:text-2xl font-medium text-gray-200 drop-shadow-xl" // 👈 light gray kiya
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.5 }}

@@ -1,143 +1,108 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion"; // eslint-disable-line
+import { motion } from "framer-motion";// eslint-disable-line
 import Student_img from "../../assets/student.jpg";
-import { 
-  FaBook, 
-  FaClipboardList, 
-  FaBullhorn, 
-  FaCalendarAlt, 
-  FaGraduationCap, 
-  FaRegCalendarCheck 
+import {
+  FaBook,
+  FaClipboardList,
+  FaBullhorn,
+  FaCalendarAlt,
+  FaGraduationCap,
+  FaRegCalendarCheck,
 } from "react-icons/fa";
+import { FiLogOut } from "react-icons/fi";
 
-const Dashboard = ({ user, setUser }) => {
+const StudentDashboard = ({ user, setUser }) => {
   const navigate = useNavigate();
+  const [activeOption, setActiveOption] = useState("Dashboard");
 
   const handleLogout = () => {
     setUser(null);
     navigate("/");
   };
 
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-    hover: { scale: 1.05, boxShadow: "0 15px 30px rgba(0,0,0,0.15)" }
-  };
+  const menuItems = [
+    { name: "Today's Homework", icon: <FaBook size={20} /> },
+    { name: "Attendance Report", icon: <FaClipboardList size={20} /> },
+    { name: "View Notice", icon: <FaBullhorn size={20} /> },
+    { name: "Exam Timetable", icon: <FaCalendarAlt size={20} /> },
+    { name: "View Result", icon: <FaGraduationCap size={20} /> },
+    { name: "Request for Leave", icon: <FaRegCalendarCheck size={20} /> },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      {/* Profile Section */}
-      {/* Profile Info */}
-<div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 w-full">
-  {/* Image + Role */}
-  <div className="flex flex-col items-center gap-2">
-    <img
-      src={Student_img}
-      alt="Profile"
-      className="w-28 h-28 rounded-full object-cover border-2 border-gray-300 shadow-md"
-    />
-    {/* Role below image */}
-    <p className="text-indigo-500 font-medium mt-1 capitalize">
-      Role: {user?.role || "Student"}
-    </p>
-  </div>
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
+      <div className="w-72 bg-white border-r border-gray-200 p-6 flex flex-col">
+        {/* Profile Section */}
+        <div className="flex flex-col items-center text-center mb-10">
+          <img
+            src={Student_img}
+            alt="Student"
+            className="w-28 h-28 rounded-full object-cover border-2 border-gray-300 shadow-md"
+          />
+          <h2 className="mt-4 text-lg font-semibold text-gray-800">
+            {user?.name || "Shivangi Gour"}
+          </h2>
+          <p className="text-sm text-indigo-500 font-medium">
+            Role: {user?.role || "Student"}
+          </p>
+          <p className="text-sm text-gray-600 mt-1">
+            Class: {user?.class || "10th A"}
+          </p>
+          <p className="text-sm text-gray-600">Address: Harda</p>
+        </div>
 
-  {/* Other Profile Info */}
-  <div className="text-center sm:text-left flex-1 sm:ml-6 space-y-2">
-    <h2 className="text-3xl font-semibold text-gray-800">{user?.email || "Shivangi Gour"}</h2>
-    <p className="text-gray-600">
-      <span className="font-semibold">School:</span> Gyan Ganga School
-    </p>
-    <p className="text-gray-600">
-      <span className="font-semibold">Address:</span> Harda
-    </p>
-  </div>
+        {/* Menu Items */}
+        <nav className="flex flex-col gap-4">
+          {menuItems.map((item, index) => (
+            <motion.button
+              key={index}
+              onClick={() => setActiveOption(item.name)}
+              whileHover={{ scale: 1.05, x: 5 }}
+              className={`flex items-center gap-3 px-4 py-2 rounded-lg transition cursor-pointer
+                ${
+                  activeOption === item.name
+                    ? "bg-purple-600 text-white shadow-lg"
+                  : "text-gray-700 hover:bg-gray-100"
+                }`}
+            >
+              {item.icon}
+              <span>{item.name}</span>
+            </motion.button>
+          ))}
+        </nav>
+      </div>
 
+      {/* Main Content Area */}
+      <div className="flex-1 p-8">
+        {/* Top Bar */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">{activeOption}</h1>
 
+          {/* White Logout Button */}
+          <motion.button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-100"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FiLogOut /> Logout
+          </motion.button>
+        </div>
 
-
-  {/* Logout Button */}
-  <motion.button
-    onClick={handleLogout}
-    whileHover={{ scale: 1.05, backgroundColor: "#f87171" }}
-    className="bg-red-500 text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-red-400 transition mt-4 sm:mt-0"
-  >
-    Logout
-  </motion.button>
-</div>
-
-
-      {/* Options Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
-        <motion.div 
-          variants={cardVariants} 
-          initial="hidden" 
-          animate="visible" 
-          whileHover="hover"
-          className="bg-white/70 backdrop-blur-md rounded-xl p-6 flex flex-col items-center cursor-pointer border border-gray-200 shadow-sm hover:shadow-lg transition"
-        >
-          <FaBook className="text-indigo-500 text-4xl mb-3" />
-          <p className="font-semibold text-gray-700">Today's Homework</p>
-        </motion.div>
-
-        <motion.div 
-          variants={cardVariants} 
-          initial="hidden" 
-          animate="visible" 
-          whileHover="hover"
-          className="bg-white/70 backdrop-blur-md rounded-xl p-6 flex flex-col items-center cursor-pointer border border-gray-200 shadow-sm hover:shadow-lg transition"
-        >
-          <FaClipboardList className="text-green-500 text-4xl mb-3" />
-          <p className="font-semibold text-gray-700">Attendance Report</p>
-        </motion.div>
-
-        <motion.div 
-          variants={cardVariants} 
-          initial="hidden" 
-          animate="visible" 
-          whileHover="hover"
-          className="bg-white/70 backdrop-blur-md rounded-xl p-6 flex flex-col items-center cursor-pointer border border-gray-200 shadow-sm hover:shadow-lg transition"
-        >
-          <FaBullhorn className="text-yellow-500 text-4xl mb-3" />
-          <p className="font-semibold text-gray-700">View Notice</p>
-        </motion.div>
-
-        <motion.div 
-          variants={cardVariants} 
-          initial="hidden" 
-          animate="visible" 
-          whileHover="hover"
-          className="bg-white/70 backdrop-blur-md rounded-xl p-6 flex flex-col items-center cursor-pointer border border-gray-200 shadow-sm hover:shadow-lg transition"
-        >
-          <FaCalendarAlt className="text-purple-500 text-4xl mb-3" />
-          <p className="font-semibold text-gray-700">Exam Timetable</p>
-        </motion.div>
-
-        <motion.div 
-          variants={cardVariants} 
-          initial="hidden" 
-          animate="visible" 
-          whileHover="hover"
-          className="bg-white/70 backdrop-blur-md rounded-xl p-6 flex flex-col items-center cursor-pointer border border-gray-200 shadow-sm hover:shadow-lg transition"
-        >
-          <FaGraduationCap className="text-pink-500 text-4xl mb-3" />
-          <p className="font-semibold text-gray-700">View Result</p>
-        </motion.div>
-
-        <motion.div 
-          variants={cardVariants} 
-          initial="hidden" 
-          animate="visible" 
-          whileHover="hover"
-          className="bg-white/70 backdrop-blur-md rounded-xl p-6 flex flex-col items-center cursor-pointer border border-gray-200 shadow-sm hover:shadow-lg transition"
-        >
-          <FaRegCalendarCheck className="text-red-500 text-4xl mb-3" />
-          <p className="font-semibold text-gray-700">Request for Leave</p>
-        </motion.div>
+        {/* Content Box */}
+        <div className="bg-white rounded-xl shadow p-6">
+          <p className="text-gray-600">
+            You have selected:{" "}
+            <span className="font-semibold text-indigo-600">
+              {activeOption}
+            </span>
+          </p>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default StudentDashboard;
