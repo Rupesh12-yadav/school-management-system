@@ -4,6 +4,7 @@ import { FaUserPlus, FaTrash, FaCalendarAlt } from "react-icons/fa";
 import { MdAssessment, MdCampaign } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
 import { useNavigate } from "react-router-dom"; // ✅ Navigate ko replace kiya useNavigate se
+import AdminAddSection from "./Add_Student&Teacher";
 
 export default function AdminDashboard({ admin, setUser }) {
   const [active, setActive] = useState("Dashboard");
@@ -71,17 +72,24 @@ export default function AdminDashboard({ admin, setUser }) {
           </motion.button>
         </div>
 
-        <motion.div
-          key={active}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="bg-white p-4 md:p-6 rounded-xl shadow-sm"
-        >
-          <p className="text-gray-600 text-sm md:text-base">
-            {`You have selected "${active}". Content for this section will be displayed here.`}
-          </p>
-        </motion.div>
+       <motion.div
+  key={active}
+  initial={{ opacity: 0, y: 10 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4 }}
+  className="p-2 md:p-4 rounded-xl"
+>
+  {active === "Add Student/Teacher" ? (
+    <AdminAddSection/>
+  ) : (
+    <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm">
+      <p className="text-gray-600 text-sm md:text-base">
+        {`You have selected "${active}". Content for this section will be displayed here.`}
+      </p>
+    </div>
+  )}
+</motion.div>
+
       </main>
     </div>
   );
