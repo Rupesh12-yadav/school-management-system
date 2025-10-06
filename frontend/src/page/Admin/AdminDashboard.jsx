@@ -1,13 +1,21 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion"; // eslint-disable-line
+import { motion } from "framer-motion";
 import { FaUserPlus, FaTrash, FaCalendarAlt } from "react-icons/fa";
 import { MdAssessment, MdCampaign } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
-import { useNavigate } from "react-router-dom"; // ✅ Navigate ko replace kiya useNavigate se
+import { useNavigate } from "react-router-dom";
 
-export default function AdminDashboard({ admin, setUser }) {
+export default function AdminDashboard() {
   const [active, setActive] = useState("Dashboard");
   const navigate = useNavigate();
+
+  // ✅ Dummy Admin Data (no props)
+  const admin = {
+    name: "Rupesh Yadav",
+    role: "Admin",
+    image:
+      "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740&q=80",
+  };
 
   const menuItems = [
     { name: "Add Student/Teacher", icon: <FaUserPlus />, key: "add" },
@@ -18,8 +26,8 @@ export default function AdminDashboard({ admin, setUser }) {
   ];
 
   const handleLogout = () => {
-    setUser(null);
-    navigate("/"); // ✅ sahi tarika
+    localStorage.removeItem("token"); // optional
+    navigate("/"); // ✅ Redirect to login page
   };
 
   return (
