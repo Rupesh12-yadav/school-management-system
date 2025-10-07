@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion"; // eslint-disable-line
+import { motion } from "framer-motion";// eslint-disable-line
 import { useNavigate } from "react-router-dom";
+import backButton from "../assets/back button.png"; // 👈 adjust path as needed
 
 const Login = ({ setUser }) => {
   const [email, setEmail] = useState("");
@@ -12,13 +13,13 @@ const Login = ({ setUser }) => {
 
     if (email === "student@example.com" && password === "1234") {
       setUser({ role: "student", email });
-      navigate("/dashboard"); // redirect student
+      navigate("/dashboard");
     } else if (email === "teacher@example.com" && password === "1234") {
       setUser({ role: "teacher", email });
-      navigate("/teacher-dashboard"); // teacher route (banana hoga)
+      navigate("/teacher-dashboard");
     } else if (email === "admin@example.com" && password === "1234") {
       setUser({ role: "admin", email });
-      navigate("/admin-dashboard"); // admin route (banana hoga)
+      navigate("/admin-dashboard");
     } else {
       alert("Invalid credentials");
     }
@@ -27,21 +28,25 @@ const Login = ({ setUser }) => {
   return (
     <div
       className="flex items-center justify-center min-h-screen bg-gray-100 p-4"
-      onClick={() => navigate("/")} // 👈 agar background pe click kare to homepage pe bhej do
+      onClick={() => navigate("/")}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.8, y: -50 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 relative"
-        onClick={(e) => e.stopPropagation()} // 👈 andar form pe click karne se background ka event trigger na ho
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* Back button */}
+        {/* Back button image */}
         <button
           onClick={() => navigate("/")}
-          className="absolute top-4 left-4 text-gray-600 hover:text-black"
+          className="absolute top-4 left-4 focus:outline-none"
         >
-          ⬅ Back
+          <img
+            src={backButton}
+            alt="Back"
+            className="w-8 h-8 filter grayscale hover:grayscale-0 hover:scale-110 transition-all duration-200"
+          />
         </button>
 
         <h2 className="text-center text-3xl font-extrabold text-gray-800 mb-8">
