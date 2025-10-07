@@ -16,7 +16,7 @@ import cors from "cors";
 dotenv.config();
 const app = express();
 app.use(cors({
-    origin: "http://localhost:3000", // yaha aapka React frontend ka port
+    origin: "http://localhost:3001", // yaha aapka React frontend ka port
     credentials: true, // agar cookies/token bhejna hai
 }));
 
