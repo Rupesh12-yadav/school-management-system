@@ -1,7 +1,6 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion"; // eslint-disable-line
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";// eslint-disable-line
-import Student_img from "../../assets/student.jpg";
 import {
   FaBook,
   FaClipboardList,
@@ -11,10 +10,12 @@ import {
   FaRegCalendarCheck,
 } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
+import Student_img from "../../assets/student.jpg";
 
-const StudentDashboard = ({ user, setUser }) => {
+export default function StudentDashboard({ user, setUser }) {
+  const [active, setActive] = useState("Dashboard");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
-  const [activeOption, setActiveOption] = useState("Dashboard");
 
   const handleLogout = () => {
     setUser(null);
@@ -22,68 +23,83 @@ const StudentDashboard = ({ user, setUser }) => {
   };
 
   const menuItems = [
-    { name: "Today's Homework", icon: <FaBook size={20} /> },
-    { name: "Attendance Report", icon: <FaClipboardList size={20} /> },
-    { name: "View Notice", icon: <FaBullhorn size={20} /> },
-    { name: "Exam Timetable", icon: <FaCalendarAlt size={20} /> },
-    { name: "View Result", icon: <FaGraduationCap size={20} /> },
-    { name: "Request for Leave", icon: <FaRegCalendarCheck size={20} /> },
+    { name: "Today's Homework", icon: <FaBook />, key: "homework" },
+    { name: "Attendance Report", icon: <FaClipboardList />, key: "attendance" },
+    { name: "View Notice", icon: <FaBullhorn />, key: "notice" },
+    { name: "Exam Timetable", icon: <FaCalendarAlt />, key: "exam" },
+    { name: "View Result", icon: <FaGraduationCap />, key: "result" },
+    { name: "Request for Leave", icon: <FaRegCalendarCheck />, key: "leave" },
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="w-72 bg-white border-r border-gray-200 p-6 flex flex-col">
-        {/* Profile Section */}
-        <div className="flex flex-col items-center text-center mb-10">
-          <img
-            src={Student_img}
-            alt="Student"
-            className="w-28 h-28 rounded-full object-cover border-2 border-gray-300 shadow-md"
-          />
-          <h2 className="mt-4 text-lg font-semibold text-gray-800">
-            {user?.name || "Shivangi Gour"}
-          </h2>
-          <p className="text-sm text-indigo-500 font-medium">
-            Role: {user?.role || "Student"}
-          </p>
-          <p className="text-sm text-gray-600 mt-1">
-            Class: {user?.class || "10th A"}
-          </p>
-          <p className="text-sm text-gray-600">Address: Harda</p>
-        </div>
+    <div className="flex flex-col md:flex-row h-screen bg-gray-100">
+      {/* Mobile Header */}
+      <div className="md:hidden flex justify-between items-center bg-white p-4 shadow-md">
+        <h1 className="text-lg font-bold">{active}</h1>
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="text-gray-700 text-3xl"
+        >
+          {isSidebarOpen ? "✖" : "☰"}
+        </button>
+      </div>
 
-        {/* Menu Items */}
-        <nav className="flex flex-col gap-4">
-          {menuItems.map((item, index) => (
+      {/* Sidebar */}
+      <aside
+        className={`fixed md:static z-20 bg-white shadow-md flex flex-col items-center py-6 w-64 h-full transition-transform duration-300 ease-in-out
+        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
+      >
+        <motion.img
+          src={Student_img}
+          alt="Profile"
+          className="w-20 h-20 md:w-24 md:h-24 rounded-full mb-4 object-cover border border-gray-200"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.5 }}
+        />
+        <h2 className="font-bold text-base md:text-lg">{user?.email || "shivangi.gour@gmail.com"}</h2>
+        <p className="text-gray-500 mb-6 text-sm md:text-base capitalize">
+          {user?.role || "Student"}
+        </p>
+
+        <nav className="flex-1 w-full px-4 space-y-3 overflow-y-auto">
+          {menuItems.map((item) => (
             <motion.button
-              key={index}
-              onClick={() => setActiveOption(item.name)}
-              whileHover={{ scale: 1.05, x: 5 }}
-              className={`flex items-center gap-3 px-4 py-2 rounded-lg transition cursor-pointer
-                ${
-                  activeOption === item.name
-                    ? "bg-purple-600 text-white shadow-lg"
+              key={item.key}
+              onClick={() => {
+                setActive(item.name);
+                setIsSidebarOpen(false); // Close sidebar on mobile
+              }}
+              className={`flex items-center gap-3 w-full px-4 py-3 rounded-lg text-left font-medium transition-all duration-200 ${
+                active === item.name
+                  ? "bg-indigo-600 text-white shadow-lg"
                   : "text-gray-700 hover:bg-gray-100"
-                }`}
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               {item.icon}
-              <span>{item.name}</span>
+              <span className="text-sm md:text-base">{item.name}</span>
             </motion.button>
           ))}
         </nav>
-      </div>
+      </aside>
 
-      {/* Main Content Area */}
-      <div className="flex-1 p-8">
-        {/* Top Bar */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">{activeOption}</h1>
+      {/* Overlay for Mobile */}
+      {isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 bg-black opacity-40 z-10 md:hidden"
+        ></div>
+      )}
 
-          {/* White Logout Button */}
+      {/* Main Content */}
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center sm:text-left">{active}</h1>
           <motion.button
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-100"
+            className="flex items-center gap-2 px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-100 transition text-sm md:text-base"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -91,18 +107,18 @@ const StudentDashboard = ({ user, setUser }) => {
           </motion.button>
         </div>
 
-        {/* Content Box */}
-        <div className="bg-white rounded-xl shadow p-6">
+        <motion.div
+          key={active}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="bg-white p-6 rounded-xl shadow-sm"
+        >
           <p className="text-gray-600">
-            You have selected:{" "}
-            <span className="font-semibold text-indigo-600">
-              {activeOption}
-            </span>
+            {`You have selected "${active}". Content for this section will appear here.`}
           </p>
-        </div>
-      </div>
+        </motion.div>
+      </main>
     </div>
   );
-};
-
-export default StudentDashboard;
+}
