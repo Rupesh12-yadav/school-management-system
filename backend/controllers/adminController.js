@@ -1,27 +1,29 @@
 import Admin from "../models/Admin.js";
+import Teacher from "../models/Teacher.js";
+import Student from "../models/Student.js";
 import generateToken from "../utils/generateToken.js";
-  
+
 // Generate JWT
 
 // Register Controller
 export const registerAdmin = async (req, res) => {
-  const { name, email, password, role,domain } = req.body;
+  const { name, email, password, role, domain } = req.body;
 
   try {
     const userExists = await Admin.findOne({ email });
-    if(userExists) return res.status(400).json({ message: "User already exists" });
+    if (userExists) return res.status(400).json({ message: "User already exists" });
 
-    const user = await Admin.create({ name, email, password, role,domain });
+    const user = await Admin.create({ name, email, password, role, domain });
 
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
-      domain:user.domain,
+      domain: user.domain,
       token: generateToken(user._id)
     });
-  } catch(error){
+  } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
@@ -32,17 +34,44 @@ export const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // 1️⃣ Find admin by email
-    const user = await Admin.findOne({ email });
+    let user;
+    let role;
 
-    // 2️⃣ Check password
+    // 1️⃣ Try Admin
+    user = await Admin.findOne({ email });
+    if (user) role = "Admin";
+
+    // 2️⃣ Try Teacher
+    if (!user) {
+      user = await Teacher.findOne({ email });
+      if (user) role = "Teacher";
+    }
+
+    // 3️⃣ Try Student
+    if (!user) {
+      user = await Student.findOne({ email });
+      if (user) role = "Student";
+    }
+
+    // 4️⃣ Check password
     if (user && (await user.matchPassword(password))) {
+      // Role-based success message
+      let successMessage;
+      if (role === "Student") {
+        successMessage = `Welcome Student ${user.name}! You have successfully logged in.`;
+      } else if (role === "Teacher") {
+        successMessage = `Welcome Teacher ${user.name}! You have successfully logged in.`;
+      } else if (role === "Admin") {
+        successMessage = `Welcome Admin ${user.name}! You have successfully logged in.`;
+      }
+
       res.json({
         _id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,                          // Admin
-        token: generateToken(user._id, user.role) // Token me role include
+        role: role,                           // ✅ Use role variable
+        token: generateToken(user._id, role), // ✅ Token includes correct role
+        message: successMessage                // ✅ Send role-based message
       });
     } else {
       res.status(401).json({ message: "Invalid email or password" });
@@ -56,4 +85,14 @@ export const loginAdmin = async (req, res) => {
 // Example Protected Controller
 export const adminOnly = (req, res) => {
   res.json({ message: `Welcome Admin ${req.user.name}` });
+}
+
+
+export const studentOnly = (req, res) => {
+  res.json({ message: `Welcome Student ${req.user.name}` });
+}
+
+
+export const teacherOnly = (req, res) => {
+  res.json({ message: `Welcome Teacher ${req.user.name}` });
 }
