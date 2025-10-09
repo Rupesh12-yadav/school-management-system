@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import adminRoutes from "./routes/adminRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
 import teacherRoutes from "./routes/teacherRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
@@ -34,7 +33,7 @@ console.log("JWT Secret:", process.env.JWT_SECRET);
 
 // Routes
 app.use("/api/auth", adminRoutes);       // Admin routes
-app.use("/api/auth/users", userRoutes);        // User routes (if any)
+       // User routes (if any)
 app.use("/api/admin/teachers", teacherRoutes);       // Teacher management routes
 app.use("/api/admin/students", studentRoutes);
 app.use("/api/admin/events", eventRoutes);
