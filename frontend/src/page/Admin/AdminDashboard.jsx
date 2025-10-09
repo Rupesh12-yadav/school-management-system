@@ -10,7 +10,6 @@ import { FiLogOut } from "react-icons/fi";
 import { Navigate } from "react-router-dom";
 import AdminAddSection from "./AdminAdd";
 
-
 export default function AdminDashboard({ admin, setUser }) {
   const [active, setActive] = useState("Dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -125,7 +124,6 @@ export default function AdminDashboard({ admin, setUser }) {
             </p>
           )}
         </motion.div>
-
       </main>
     </div>
   );
