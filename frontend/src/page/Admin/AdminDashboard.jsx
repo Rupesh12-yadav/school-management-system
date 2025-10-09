@@ -5,6 +5,11 @@ import { MdAssessment, MdCampaign } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
 import { Navigate } from "react-router-dom";
 import AdminAddSection from "./AdminAdd";
+import AttendanceReport from "./ViewAttendence";
+import DeleteUser from "./DeleteUser";
+import CreateNotice from "./CreateNotice";
+import ManageHolidays from "./ManageHolidays";
+
 
 export default function AdminDashboard({ admin, setUser }) {
   const [active, setActive] = useState("Dashboard");
@@ -102,20 +107,30 @@ export default function AdminDashboard({ admin, setUser }) {
         </div>
 
         <motion.div
-          key={active}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="bg-white p-4 md:p-6 rounded-xl shadow-sm"
-        >
-          {active === "Add Student/Teacher" ? (
-            <AdminAddSection /> // ✅ Render add section UI
-          ) : (
-            <p className="text-gray-600 text-sm md:text-base">
-              {`You have selected "${active}". Content for this section will be displayed here.`}
-            </p>
-          )}
-        </motion.div>
+  key={active}
+  initial={{ opacity: 0, y: 10 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4 }}
+  className="bg-white p-4 md:p-6 rounded-xl shadow-sm"
+>
+  {active === "Add Student/Teacher" ? (
+    <AdminAddSection />
+  ) : active === "View Attendance Report" ? (
+    <AttendanceReport />
+  ) : active === "Delete Student/Teacher"?(
+    <DeleteUser/>
+  ): active ==="Create Notice"?( 
+    <CreateNotice/>
+  ):active ==="Manage Holidays"? (
+    <ManageHolidays/>
+  ):(
+    <p className="text-gray-600 text-sm md:text-base">
+      {`You have selected "${active}". Content for this section will be displayed here.`}
+    </p>
+  )}
+</motion.div>
+
+        
       </main>
     </div>
   );
