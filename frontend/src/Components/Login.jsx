@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";// eslint-disable-line
+import { motion } from "framer-motion"; // eslint-disable-line
 import { useNavigate } from "react-router-dom";
-import backButton from "../assets/back button.png"; // 👈 adjust path as needed
+import backButton from "../assets/back button.png";
 
 const Login = ({ setUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  // ✅ Login form submit hone par user role ke hisaab se redirect + localStorage save (App.jsx me handleLogin ke through)
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (email === "student@example.com" && password === "1234") {
-      setUser({ role: "student", email });
-      navigate("/dashboard");
+      setUser({ role: "student", email }); // App.jsx me localStorage me save hoga
+      navigate("/student-dashboard");
     } else if (email === "teacher@example.com" && password === "1234") {
       setUser({ role: "teacher", email });
       navigate("/teacher-dashboard");
@@ -37,7 +38,7 @@ const Login = ({ setUser }) => {
         className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Back button image */}
+        {/* 🔙 Back Button */}
         <button
           onClick={() => navigate("/")}
           className="absolute top-4 left-4 focus:outline-none"
@@ -53,6 +54,7 @@ const Login = ({ setUser }) => {
           School Management Login
         </h2>
 
+        {/* 🔐 Login Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label>Email Address</label>
