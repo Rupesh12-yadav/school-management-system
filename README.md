@@ -63,3 +63,20 @@ git add .
   "marksUploaded": ["652f4c2d9b8a1e6c87654321"],
   "leaveRequests": ["65304d3e7c9a5f2b12345678"]
 }
+
+
+{
+  "name": "Ravi Sharma",
+  "email": "ravi.sharma@example.com",
+  "password": "Test@1234", 
+  "role": "Teacher",
+  "mobile": "9876543210",
+  "location": "Delhi",
+  "experience": 5,
+  "subjects": ["Math", "Physics"],
+  "students": [],
+  "homeworkCreated": [],
+  "marksUploaded": [],
+  "leaveRequests": []
+}
+
