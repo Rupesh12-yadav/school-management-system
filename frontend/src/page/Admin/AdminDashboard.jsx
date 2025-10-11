@@ -3,6 +3,7 @@ import { motion } from "framer-motion"; // eslint-disable-line
 import { FaUserPlus, FaTrash, FaCalendarAlt } from "react-icons/fa";
 import { MdAssessment, MdCampaign } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
+<<<<<<< HEAD
 import { Navigate } from "react-router-dom";
 import AdminAddSection from "./AdminAdd";
 import AttendanceReport from "./ViewAttendence";
@@ -10,6 +11,16 @@ import DeleteUser from "./DeleteUser";
 import CreateNotice from "./CreateNotice";
 import ManageHolidays from "./ManageHolidays";
 
+=======
+// <<<<<<< HEAD
+// import { useNavigate } from "react-router-dom"; // ✅ Navigate ko replace kiya useNavigate se
+// import AdminAddSection from "./Add_Student&Teacher";
+
+import { Navigate } from "react-router-dom";
+import AdminAddSection from "./AdminAdd";
+import DeleteUser from "./DeleteUser";
+import AttendanceReport from "./ViewAttendence";
+>>>>>>> 83ece6d08543bfbbe4693b66af24233dd095c86b
 
 export default function AdminDashboard({ admin, setUser }) {
   const [active, setActive] = useState("Dashboard");
@@ -106,7 +117,12 @@ export default function AdminDashboard({ admin, setUser }) {
           </motion.button>
         </div>
 
+
+       
+
+
         <motion.div
+<<<<<<< HEAD
   key={active}
   initial={{ opacity: 0, y: 10 }}
   animate={{ opacity: 1, y: 0 }}
@@ -131,6 +147,28 @@ export default function AdminDashboard({ admin, setUser }) {
 </motion.div>
 
         
+=======
+          key={active}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="bg-white p-4 md:p-6 rounded-xl shadow-sm"
+        >
+          {active === "Add Student/Teacher" ? (
+            <AdminAddSection /> // ✅ Render add section UI
+          ) : active ==="Delete Student/Teacher"?
+          (
+            <DeleteUser/>
+          ): active === "View Attendance Report"?(
+            <AttendanceReport/>):(
+
+            
+            <p className="text-gray-600 text-sm md:text-base">
+              {`You have selected "${active}". Content for this section will be displayed here.`}
+            </p>
+          )}
+        </motion.div>
+>>>>>>> 83ece6d08543bfbbe4693b66af24233dd095c86b
       </main>
     </div>
   );
