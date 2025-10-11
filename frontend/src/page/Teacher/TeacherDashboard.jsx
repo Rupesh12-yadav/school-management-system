@@ -5,12 +5,17 @@ import { MdCampaign, MdEventNote } from "react-icons/md";
 import { IoIosPaper } from "react-icons/io";
 import { FiLogOut } from "react-icons/fi";
 import { Navigate } from "react-router-dom";
+import AddHomework from "./AddHomework";
+import ViewNotice from "./ViewNotice";
+import MarkAttendance from "./MarkAttendence";
+import PostExam from "./PostExam";
+import LeaveRequests from "./LeaveRequest";
+import MarksUpload from "./UplodeMarks";
 
-export default function TeacherDashboard({setUser}) {
+export default function TeacherDashboard({ setUser }) {
   const [active, setActive] = useState("Teacher Dashboard");
 
-
-    const handleLogout = () => {
+  const handleLogout = () => {
     setUser(null);
     Navigate("/");
   };
@@ -64,11 +69,11 @@ export default function TeacherDashboard({setUser}) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-8">
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-6 gap-4">
           <h1 className="text-2xl md:text-3xl font-bold">{active}</h1>
           <motion.button
-          onClick={handleLogout}
+            onClick={handleLogout}
             className="flex items-center gap-2 px-3 md:px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-100 text-sm md:text-base"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -77,6 +82,7 @@ export default function TeacherDashboard({setUser}) {
           </motion.button>
         </div>
 
+        {/* Render Section Based on Menu Selection */}
         <motion.div
           key={active}
           initial={{ opacity: 0, y: 10 }}
@@ -84,9 +90,25 @@ export default function TeacherDashboard({setUser}) {
           transition={{ duration: 0.4 }}
           className="bg-white p-4 md:p-6 rounded-xl shadow-sm"
         >
-          <p className="text-gray-600 text-sm md:text-base">
-            {`You have selected "${active}". Content for this section will be displayed here.`}
-          </p>
+          {active === "Add Homework" ? (
+            <AddHomework />
+          ) :
+          active==="View Notice"?(
+            <ViewNotice/>
+          ):active==="Mark Attendance"?(
+            <MarkAttendance/>
+          ):active==="Post Exam"?(
+            <PostExam/>
+          ):active==="Leave Request"?(
+            <LeaveRequests/>
+          ):active==="Upload Marks"?(
+            <MarksUpload/>
+          ):
+          (
+            <p className="text-gray-600 text-sm md:text-base">
+              You have selected "{active}". Content for this section will be displayed here.
+            </p>
+          )}
         </motion.div>
       </main>
     </div>
