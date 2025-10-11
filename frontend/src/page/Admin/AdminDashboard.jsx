@@ -4,6 +4,7 @@ import { FaUserPlus, FaTrash, FaCalendarAlt } from "react-icons/fa";
 import { MdAssessment, MdCampaign } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Navigate } from "react-router-dom";
 import AdminAddSection from "./AdminAdd";
 import AttendanceReport from "./ViewAttendence";
@@ -21,6 +22,14 @@ import AdminAddSection from "./AdminAdd";
 import DeleteUser from "./DeleteUser";
 import AttendanceReport from "./ViewAttendence";
 >>>>>>> 83ece6d08543bfbbe4693b66af24233dd095c86b
+=======
+// <<<<<<< HEAD
+// import { useNavigate } from "react-router-dom"; // ✅ Navigate ko replace kiya useNavigate se
+// import AdminAddSection from "./Add_Student&Teacher";
+
+import { Navigate } from "react-router-dom";
+import AdminAddSection from "./AdminAdd";
+>>>>>>> 0c25796054c37d62ec4f62d76803105a90266a42
 
 export default function AdminDashboard({ admin, setUser }) {
   const [active, setActive] = useState("Dashboard");
@@ -117,6 +126,7 @@ export default function AdminDashboard({ admin, setUser }) {
           </motion.button>
         </div>
 
+<<<<<<< HEAD
 
        
 
@@ -148,6 +158,13 @@ export default function AdminDashboard({ admin, setUser }) {
 
         
 =======
+=======
+
+       
+
+
+        <motion.div
+>>>>>>> 0c25796054c37d62ec4f62d76803105a90266a42
           key={active}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -156,6 +173,7 @@ export default function AdminDashboard({ admin, setUser }) {
         >
           {active === "Add Student/Teacher" ? (
             <AdminAddSection /> // ✅ Render add section UI
+<<<<<<< HEAD
           ) : active ==="Delete Student/Teacher"?
           (
             <DeleteUser/>
@@ -163,12 +181,18 @@ export default function AdminDashboard({ admin, setUser }) {
             <AttendanceReport/>):(
 
             
+=======
+          ) : (
+>>>>>>> 0c25796054c37d62ec4f62d76803105a90266a42
             <p className="text-gray-600 text-sm md:text-base">
               {`You have selected "${active}". Content for this section will be displayed here.`}
             </p>
           )}
         </motion.div>
+<<<<<<< HEAD
 >>>>>>> 83ece6d08543bfbbe4693b66af24233dd095c86b
+=======
+>>>>>>> 0c25796054c37d62ec4f62d76803105a90266a42
       </main>
     </div>
   );
