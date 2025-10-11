@@ -1,88 +1,93 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
+import { motion } from "framer-motion";// eslint-disable-line
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { AuthContext } from "../context/authContext";
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import backButton from "../assets/back button.png"; // 👈 adjust path as needed
 
-const Login = () => {
+const Login = ({ setUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
 
-    try {
-      const { data } = await axios.post(
-        "http://localhost:3001/api/auth/login",
-        { email, password }
-      );
-
-      // ✅ Save user + token
-      login(data);
-
-      // ✅ Success toast
-      toast.success("Login successful!", { position: "top-right", autoClose: 2000 });
-
-      // ✅ Redirect after 2 sec
-      setTimeout(() => {
-        if (data.role === "Admin") navigate("/admin-dashboard");
-        else if (data.role === "Teacher") navigate("/teacher-dashboard");
-        else if (data.role === "Student") navigate("/student-dashboard");
-      }, 0);
-
-    } catch (error) {
-      console.error("Login error:", error.response?.data?.message);
-
-      // ❌ Error toast instead of alert
-      toast.error(error.response?.data?.message || "Login failed", { position: "top-right", autoClose: 3000 });
-    } finally {
-      setLoading(false);
+    if (email === "student@example.com" && password === "1234") {
+      setUser({ role: "student", email });
+      navigate("/dashboard");
+    } else if (email === "teacher@example.com" && password === "1234") {
+      setUser({ role: "teacher", email });
+      navigate("/teacher-dashboard");
+    } else if (email === "admin@example.com" && password === "1234") {
+      setUser({ role: "admin", email });
+      navigate("/admin-dashboard");
+    } else {
+      alert("Invalid credentials");
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-      <ToastContainer /> {/* Toast container must be rendered */}
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-        <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div
+      className="flex items-center justify-center min-h-screen bg-gray-100 p-4"
+      onClick={() => navigate("/")}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8, y: -50 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Back button image */}
+        <button
+          onClick={() => navigate("/")}
+          className="absolute top-4 left-4 focus:outline-none"
+        >
+          <img
+            src={backButton}
+            alt="Back"
+            className="w-8 h-8 filter grayscale hover:grayscale-0 hover:scale-110 transition-all duration-200"
+          />
+        </button>
+
+        <h2 className="text-center text-3xl font-extrabold text-gray-800 mb-8">
+          School Management Login
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block mb-1 font-medium">Email</label>
+            <label>Email Address</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               required
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
             />
           </div>
+
           <div>
-            <label className="block mb-1 font-medium">Password</label>
+            <label>Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               required
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
             />
           </div>
-          <button
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="submit"
-            disabled={loading}
-            className={`w-full py-3 rounded-lg text-white transition-colors ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"
-              }`}
+            className="w-full bg-indigo-600 text-white py-3 rounded-lg"
           >
-            {loading ? "Logging in..." : "Login"}
-          </button>
+            Login
+          </motion.button>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };
