@@ -1,14 +1,20 @@
 import Notice from "../models/Notice.js";
-
+import Admin from "../models/Admin.js";
 // 📌 Create Notice
 export const createNotice = async (req, res) => {
   try {
     const { title, description, createdBy, audience, isImportant, expiryDate } = req.body;
-
+    const admin = await Admin.findById(createdBy);
+    if (!admin || admin.role !== "Admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied! Only valid admins can create events."
+      });
+    }
     const notice = await Notice.create({
       title,
       description,
-      createdBy,
+      createdBy: admin.id,
       audience,
       isImportant,
       expiryDate

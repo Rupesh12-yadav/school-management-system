@@ -13,7 +13,6 @@ const router = express.Router();
 
 // Student login route (students themselves can login)
 
-
 // All student management routes (admin-only)
 router.use(protect);                 // Login required
 router.use(authorizeRoles("Admin")); // Only Admin can manage students
@@ -24,5 +23,4 @@ router.get("/student/all", getAllStudents);          // Get all students
 router.get("/student/:id", getStudentById);          // Get single student
 router.put("/student/update/:id", updateStudent);    // Update student
 router.delete("/student/delete/:id", deleteStudent); // Delete student
-
 export default router;

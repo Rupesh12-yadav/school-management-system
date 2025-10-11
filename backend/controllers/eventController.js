@@ -1,15 +1,27 @@
 import Event from "../models/Event.js";
+import Admin from "../models/Admin.js";
 
-// 📌 Create Event
+// 📌 Create Event (Admin Reference Based)
 export const createEvent = async (req, res) => {
   try {
     const { title, date, description, createdBy, audience, isHoliday, location } = req.body;
 
+    // ✅ Check if the ID belongs to a valid Admin
+    const admin = await Admin.findById(createdBy);
+
+    if (!admin || admin.role !== "Admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied! Only valid admins can create events.",
+      });
+    }
+
+    // ✅ Create the event
     const event = await Event.create({
       title,
       date,
       description,
-      createdBy,
+      createdBy: admin._id, // store as reference
       audience,
       isHoliday,
       location,
@@ -28,6 +40,7 @@ export const createEvent = async (req, res) => {
     });
   }
 };
+
 
 // 📌 Get All Events
 export const getAllEvents = async (req, res) => {

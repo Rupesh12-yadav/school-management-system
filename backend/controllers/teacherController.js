@@ -3,7 +3,7 @@ import Teacher from "../models/Teacher.js";
 // Create Teacher
 export const createTeacher = async (req, res) => {
   try {
-    const { name, email, password, mobile, location, experience, subjects } = req.body;
+    const { name, email, password, mobile, location, experience, subjects ,} = req.body;
 
     // Check duplicates
     const existingTeacher = await Teacher.findOne({ $or: [{ email }, { mobile }] });

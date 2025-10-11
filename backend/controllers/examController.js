@@ -18,7 +18,7 @@ export const createExam = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Exam posted successfully",
+      message: "Exam posted successfully"  ,
       exam: newExam
     });
   } catch (error) {
