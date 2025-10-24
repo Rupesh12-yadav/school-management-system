@@ -63,6 +63,7 @@ git add .
   "marksUploaded": ["652f4c2d9b8a1e6c87654321"],
   "leaveRequests": ["65304d3e7c9a5f2b12345678"]
 }
+<<<<<<< HEAD
 
 
 {
@@ -80,3 +81,5 @@ git add .
   "leaveRequests": []
 }
 
+=======
+>>>>>>> a1fd582

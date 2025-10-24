@@ -1,11 +1,17 @@
 import Event from "../models/Event.js";
+<<<<<<< HEAD
 import Admin from "../models/Admin.js";
 
 // 📌 Create Event (Admin Reference Based)
+=======
+
+// 📌 Create Event
+>>>>>>> a1fd582
 export const createEvent = async (req, res) => {
   try {
     const { title, date, description, createdBy, audience, isHoliday, location } = req.body;
 
+<<<<<<< HEAD
     // ✅ Check if the ID belongs to a valid Admin
     const admin = await Admin.findById(createdBy);
 
@@ -17,11 +23,17 @@ export const createEvent = async (req, res) => {
     }
 
     // ✅ Create the event
+=======
+>>>>>>> a1fd582
     const event = await Event.create({
       title,
       date,
       description,
+<<<<<<< HEAD
       createdBy: admin._id, // store as reference
+=======
+      createdBy,
+>>>>>>> a1fd582
       audience,
       isHoliday,
       location,
@@ -41,7 +53,10 @@ export const createEvent = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> a1fd582
 // 📌 Get All Events
 export const getAllEvents = async (req, res) => {
   try {

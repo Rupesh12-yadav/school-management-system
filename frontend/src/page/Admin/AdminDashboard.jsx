@@ -9,8 +9,16 @@ import { FiLogOut } from "react-icons/fi";
 
 import { Navigate } from "react-router-dom";
 import AdminAddSection from "./AdminAdd";
+<<<<<<< HEAD
 import DeleteUser from "./DeleteUser";
 import AttendanceReport from "./ViewAttendence";
+=======
+<<<<<<< HEAD
+=======
+import DeleteUser from "./DeleteUser";
+import AttendanceReport from "./ViewAttendence";
+>>>>>>> 0c774b5 (all api wokring)
+>>>>>>> a1fd582
 
 export default function AdminDashboard({ admin, setUser }) {
   const [active, setActive] = useState("Dashboard");
@@ -120,6 +128,12 @@ export default function AdminDashboard({ admin, setUser }) {
         >
           {active === "Add Student/Teacher" ? (
             <AdminAddSection /> // ✅ Render add section UI
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+          ) : (
+=======
+>>>>>>> a1fd582
           ) : active ==="Delete Student/Teacher"?
           (
             <DeleteUser/>
@@ -127,6 +141,10 @@ export default function AdminDashboard({ admin, setUser }) {
             <AttendanceReport/>):(
 
             
+<<<<<<< HEAD
+=======
+>>>>>>> 0c774b5 (all api wokring)
+>>>>>>> a1fd582
             <p className="text-gray-600 text-sm md:text-base">
               {`You have selected "${active}". Content for this section will be displayed here.`}
             </p>

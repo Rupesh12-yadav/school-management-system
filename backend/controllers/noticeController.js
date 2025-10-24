@@ -1,9 +1,14 @@
 import Notice from "../models/Notice.js";
+<<<<<<< HEAD
 import Admin from "../models/Admin.js";
+=======
+
+>>>>>>> a1fd582
 // 📌 Create Notice
 export const createNotice = async (req, res) => {
   try {
     const { title, description, createdBy, audience, isImportant, expiryDate } = req.body;
+<<<<<<< HEAD
     const admin = await Admin.findById(createdBy);
     if (!admin || admin.role !== "Admin") {
       return res.status(403).json({
@@ -15,6 +20,13 @@ export const createNotice = async (req, res) => {
       title,
       description,
       createdBy: admin.id,
+=======
+
+    const notice = await Notice.create({
+      title,
+      description,
+      createdBy,
+>>>>>>> a1fd582
       audience,
       isImportant,
       expiryDate
