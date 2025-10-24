@@ -3,21 +3,21 @@ import Teacher from "../models/Teacher.js";
 // Create Teacher
 export const createTeacher = async (req, res) => {
   try {
-<<<<<<< HEAD
-<<<<<<< HEAD
-    const { name, email, password, mobile, location, experience, subjects ,} = req.body;
-=======
     const { name, email, password, mobile, location, experience, subjects } = req.body;
->>>>>>> a1fd582
-=======
-    const { name, email, password, mobile, location, experience, subjects ,} = req.body;
->>>>>>> 7cd3b19 (All api working)
 
     // Check duplicates
     const existingTeacher = await Teacher.findOne({ $or: [{ email }, { mobile }] });
     if (existingTeacher) return res.status(400).json({ error: "Email or Mobile already exists" });
 
-    const newTeacher = await Teacher.create({ name, email, password, mobile, location, experience, subjects });
+    const newTeacher = await Teacher.create({
+      name,
+      email,
+      password,
+      mobile,
+      location,
+      experience,
+      subjects,
+    });
 
     res.status(201).json({ message: "Teacher created successfully", teacher: newTeacher });
   } catch (error) {
