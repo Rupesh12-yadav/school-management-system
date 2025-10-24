@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";// eslint-disable-line
+import { motion } from "framer-motion"; // eslint-disable-line
 import {
   FaUserPlus,
   FaTrash,
@@ -57,7 +57,7 @@ export default function AdminDashboard({ admin, setUser }) {
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className="text-gray-300 hover:text-white transition"
           >
-            {isSidebarOpen ? <FiMenu size={22} /> : <FiMenu size={22} />}
+            <FiMenu size={22} />
           </button>
         </div>
 
@@ -88,15 +88,13 @@ export default function AdminDashboard({ admin, setUser }) {
           <h2 className="text-lg font-semibold tracking-wide">
             Welcome, {admin.name} 👋
           </h2>
-          <div className="flex items-center gap-4">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              onClick={handleLogout}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl transition"
-            >
-              <FiLogOut className="inline mr-1" /> Logout
-            </motion.button>
-          </div>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            onClick={handleLogout}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl transition"
+          >
+            <FiLogOut className="inline mr-1" /> Logout
+          </motion.button>
         </header>
 
         {/* Dashboard Content */}
@@ -155,11 +153,12 @@ export default function AdminDashboard({ admin, setUser }) {
               </motion.div>
             </>
           ) : active === "Manage Student" ? (
-              <ManageStudents/>
-          ) : active==="Manage Teacher"?(
-            <ManageTeachers/>
-          ):
-           (
+            <ManageStudents />
+          ) : active === "Manage Teacher" ? (
+            <ManageTeachers />
+          ) : active === "Attendance Report" ? (
+            <AttendanceReport />
+          ) : (
             <p className="text-gray-600">
               You selected <strong>{active}</strong>. Content for this section
               will appear here.
