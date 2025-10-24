@@ -16,13 +16,9 @@ const studentSchema = new mongoose.Schema({
   rollNumber: { type: String, required: true, unique: true },
 
   attendance: [{
-<<<<<<< HEAD
-    type: mongoose.Schema.Types.ObjectId,ref:"Attendance"
-=======
     date: Date,
     status: { type: String, enum: ["Present", "Absent", "Leave"] },
     remarks: String
->>>>>>> a1fd582
   }],
 
   homework: [{ type: mongoose.Schema.Types.ObjectId, ref: "Homework" }],

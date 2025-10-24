@@ -1,5 +1,6 @@
 import Event from "../models/Event.js";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import Admin from "../models/Admin.js";
 
 // 📌 Create Event (Admin Reference Based)
@@ -7,11 +8,19 @@ import Admin from "../models/Admin.js";
 
 // 📌 Create Event
 >>>>>>> a1fd582
+=======
+import Admin from "../models/Admin.js";
+
+// 📌 Create Event (Admin Reference Based)
+>>>>>>> 7cd3b19 (All api working)
 export const createEvent = async (req, res) => {
   try {
     const { title, date, description, createdBy, audience, isHoliday, location } = req.body;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 7cd3b19 (All api working)
     // ✅ Check if the ID belongs to a valid Admin
     const admin = await Admin.findById(createdBy);
 
@@ -23,17 +32,24 @@ export const createEvent = async (req, res) => {
     }
 
     // ✅ Create the event
+<<<<<<< HEAD
 =======
 >>>>>>> a1fd582
+=======
+>>>>>>> 7cd3b19 (All api working)
     const event = await Event.create({
       title,
       date,
       description,
 <<<<<<< HEAD
+<<<<<<< HEAD
       createdBy: admin._id, // store as reference
 =======
       createdBy,
 >>>>>>> a1fd582
+=======
+      createdBy: admin._id, // store as reference
+>>>>>>> 7cd3b19 (All api working)
       audience,
       isHoliday,
       location,
@@ -54,9 +70,13 @@ export const createEvent = async (req, res) => {
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> a1fd582
+=======
+
+>>>>>>> 7cd3b19 (All api working)
 // 📌 Get All Events
 export const getAllEvents = async (req, res) => {
   try {

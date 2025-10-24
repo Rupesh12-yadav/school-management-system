@@ -4,10 +4,14 @@ import Teacher from "../models/Teacher.js";
 export const createTeacher = async (req, res) => {
   try {
 <<<<<<< HEAD
+<<<<<<< HEAD
     const { name, email, password, mobile, location, experience, subjects ,} = req.body;
 =======
     const { name, email, password, mobile, location, experience, subjects } = req.body;
 >>>>>>> a1fd582
+=======
+    const { name, email, password, mobile, location, experience, subjects ,} = req.body;
+>>>>>>> 7cd3b19 (All api working)
 
     // Check duplicates
     const existingTeacher = await Teacher.findOne({ $or: [{ email }, { mobile }] });
