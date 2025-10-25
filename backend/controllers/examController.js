@@ -13,21 +13,13 @@ export const createExam = async (req, res) => {
       examDate,
       examDay,
       totalMarks,
-      marks: marks || []
+      marks: marks || [],
     });
 
     res.status(201).json({
       success: true,
-<<<<<<< HEAD
-<<<<<<< HEAD
-      message: "Exam posted successfully"  ,
-=======
       message: "Exam posted successfully",
->>>>>>> a1fd582
-=======
-      message: "Exam posted successfully"  ,
->>>>>>> 7cd3b19 (All api working)
-      exam: newExam
+      exam: newExam,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -67,9 +59,14 @@ export const updateExam = async (req, res) => {
       { new: true }
     );
 
-    if (!updatedExam) return res.status(404).json({ success: false, message: "Exam not found" });
+    if (!updatedExam)
+      return res.status(404).json({ success: false, message: "Exam not found" });
 
-    res.status(200).json({ success: true, message: "Exam updated successfully", exam: updatedExam });
+    res.status(200).json({
+      success: true,
+      message: "Exam updated successfully",
+      exam: updatedExam,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -79,7 +76,8 @@ export const updateExam = async (req, res) => {
 export const deleteExam = async (req, res) => {
   try {
     const exam = await Exam.findByIdAndDelete(req.params.id);
-    if (!exam) return res.status(404).json({ success: false, message: "Exam not found" });
+    if (!exam)
+      return res.status(404).json({ success: false, message: "Exam not found" });
 
     res.status(200).json({ success: true, message: "Exam deleted successfully" });
   } catch (error) {

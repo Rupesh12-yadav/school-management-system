@@ -1,49 +1,28 @@
 import Notice from "../models/Notice.js";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import Admin from "../models/Admin.js";
-=======
 
->>>>>>> a1fd582
-=======
-import Admin from "../models/Admin.js";
->>>>>>> 7cd3b19 (All api working)
 // 📌 Create Notice
 export const createNotice = async (req, res) => {
   try {
     const { title, description, createdBy, audience, isImportant, expiryDate } = req.body;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 7cd3b19 (All api working)
+
+    // ✅ Check if valid Admin
     const admin = await Admin.findById(createdBy);
     if (!admin || admin.role !== "Admin") {
       return res.status(403).json({
         success: false,
-        message: "Access denied! Only valid admins can create events."
+        message: "Access denied! Only valid admins can create notices.",
       });
     }
-<<<<<<< HEAD
-    const notice = await Notice.create({
-      title,
-      description,
-      createdBy: admin.id,
-=======
 
+    // ✅ Create Notice
     const notice = await Notice.create({
       title,
       description,
-      createdBy,
->>>>>>> a1fd582
-=======
-    const notice = await Notice.create({
-      title,
-      description,
-      createdBy: admin.id,
->>>>>>> 7cd3b19 (All api working)
+      createdBy: admin._id, // store admin reference properly
       audience,
       isImportant,
-      expiryDate
+      expiryDate,
     });
 
     res.status(201).json({
