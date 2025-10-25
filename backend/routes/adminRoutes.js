@@ -4,12 +4,13 @@ import { protect, authorizeRoles } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// Routes
+// Public routes
 router.post("/register", registerAdmin);
 router.post("/login", loginAdmin);
 
-// Protected route
+// Protected routes
 router.get("/admin-only", protect, authorizeRoles("Admin"), adminOnly);
-router.get("/student-only",protect,authorizeRoles("Student"),studentOnly)
-router.get("/teacher-only",protect,authorizeRoles("Teahcer"),teacherOnly)
+router.get("/student-only", protect, authorizeRoles("Student"), studentOnly);
+router.get("/teacher-only", protect, authorizeRoles("Teacher"), teacherOnly);
+
 export default router;

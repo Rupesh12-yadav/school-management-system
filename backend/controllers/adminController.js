@@ -31,8 +31,9 @@ export const registerAdmin = async (req, res) => {
 
 // Login Controller
 export const loginAdmin = async (req, res) => {
+  console.log("backend 1")
   const { email, password } = req.body;
-
+ console.log("backend 2")
   try {
     let user;
     let role;
