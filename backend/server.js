@@ -46,9 +46,9 @@ app.use("/api/student/leave", LeaveRequest);// Student management routes
 
 // Default route
 app.get("/", (req, res) => {
-    res.send("School Management API running on port " + (process.env.PORT || 3001));
+    res.send("School Management API running on port " + (process.env.PORT || 3000));
 });
 
 // Start server
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));

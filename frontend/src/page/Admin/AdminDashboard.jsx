@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { motion } from "framer-motion"; // eslint-disable-line
 import {
   FaUserPlus,
-  FaTrash,
-  FaBookOpen,
   FaSchool,
-  FaRegCalendarCheck,
   FaChalkboardTeacher,
+  FaBookOpen,
+  FaRegCalendarCheck,
 } from "react-icons/fa";
 import {
   MdAssessment,
@@ -17,8 +16,8 @@ import {
 import { FiLogOut, FiMenu } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import ManageStudents from "./ManageStudent/ManageStudents";
-import AttendanceReport from "./AttendenceReport";
 import ManageTeachers from "./ManageTeacher/Manageteacher";
+import AttendanceReport from "./AttendenceReport";
 
 export default function AdminDashboard({ admin, setUser }) {
   const [active, setActive] = useState("Dashboard");
@@ -38,7 +37,7 @@ export default function AdminDashboard({ admin, setUser }) {
   ];
 
   const handleLogout = () => {
-    setUser(null);
+    if (setUser) setUser(null);
     navigate("/");
   };
 
@@ -50,7 +49,6 @@ export default function AdminDashboard({ admin, setUser }) {
         transition={{ duration: 0.3 }}
         className="bg-[#1E293B] text-white p-4 flex flex-col shadow-lg"
       >
-        {/* Sidebar Header */}
         <div className="flex items-center justify-between mb-6">
           {isSidebarOpen && <h1 className="text-xl font-bold">Admin Panel</h1>}
           <button
@@ -61,7 +59,6 @@ export default function AdminDashboard({ admin, setUser }) {
           </button>
         </div>
 
-        {/* Sidebar Links */}
         <nav className="space-y-3">
           {menuItems.map((item, index) => (
             <motion.div
@@ -86,7 +83,7 @@ export default function AdminDashboard({ admin, setUser }) {
         {/* Navbar */}
         <header className="bg-[#0F172A] text-white flex justify-between items-center px-6 py-4 shadow-md">
           <h2 className="text-lg font-semibold tracking-wide">
-            Welcome, {admin.name} 👋
+            Welcome, {admin?.name || "Admin"} 👋
           </h2>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -110,7 +107,6 @@ export default function AdminDashboard({ admin, setUser }) {
                 📊 Dashboard Overview
               </h2>
 
-              {/* Stats */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
                 {[
                   { title: "Total Students", value: "1,245", icon: <FaUserPlus /> },
@@ -125,9 +121,7 @@ export default function AdminDashboard({ admin, setUser }) {
                     <div className="flex justify-between items-center">
                       <div>
                         <h3 className="text-gray-600">{stat.title}</h3>
-                        <p className="text-3xl font-bold text-blue-700 mt-2">
-                          {stat.value}
-                        </p>
+                        <p className="text-3xl font-bold text-blue-700 mt-2">{stat.value}</p>
                       </div>
                       <div className="text-blue-600 text-4xl">{stat.icon}</div>
                     </div>
@@ -135,7 +129,6 @@ export default function AdminDashboard({ admin, setUser }) {
                 ))}
               </div>
 
-              {/* Welcome Message */}
               <motion.div
                 className="p-6 bg-blue-50 border border-blue-200 rounded-2xl shadow-sm"
                 initial={{ opacity: 0, y: 20 }}
@@ -146,9 +139,7 @@ export default function AdminDashboard({ admin, setUser }) {
                   Welcome to the School Admin Dashboard 🎉
                 </h3>
                 <p className="text-gray-700">
-                  Manage students, teachers, classes, attendance, and
-                  announcements all from one place. Use the sidebar to navigate
-                  between sections.
+                  Manage students, teachers, classes, attendance, and announcements all from one place.
                 </p>
               </motion.div>
             </>
@@ -160,8 +151,7 @@ export default function AdminDashboard({ admin, setUser }) {
             <AttendanceReport />
           ) : (
             <p className="text-gray-600">
-              You selected <strong>{active}</strong>. Content for this section
-              will appear here.
+              You selected <strong>{active}</strong>. Content for this section will appear here.
             </p>
           )}
         </motion.main>
