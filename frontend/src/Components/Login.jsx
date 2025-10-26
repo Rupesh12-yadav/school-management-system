@@ -15,33 +15,26 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const { data } = await axios.post("http://localhost:3001/api/auth/login", {
-        email,
-        password,
-      });
+      const { data } = await axios.post(
+        "http://localhost:3000/api/auth/login",
+        { email, password }
+      );
 
       if (data.token) {
-        // API se aaya hua user data
+        // Save user token & role
         login({ token: data.token, role: data.role, email: data.email });
 
-        toast.success("Login successful!", { autoClose: 2000 });
+        // Show success toast
+        toast.success("Login successful!", { autoClose: 1500 });
 
-        // Role ke hisaab se redirect
-        setTimeout(() => {
-          switch (data.role.toLowerCase()) {
-            case "admin":
-              navigate("/admin-dashboard");
-              break;
-            case "teacher":
-              navigate("/teacher-dashboard");
-              break;
-            case "student":
-              navigate("/student-dashboard");
-              break;
-            default:
-              navigate("/");
-          }
-        }, 2000); // toast ke baad redirect
+        // Redirect immediately based on role
+        const route = {
+          admin: "/admin-dashboard",
+          teacher: "/teacher-dashboard",
+          student: "/student-dashboard",
+        }[data.role.toLowerCase()] || "/";
+
+        navigate(route);
       } else {
         toast.error(data.message || "Login failed", { autoClose: 3000 });
       }
