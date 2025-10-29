@@ -1,203 +1,256 @@
-import React, { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";// eslint-disable-line
-import * as XLSX from "xlsx"; // npm install xlsx
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { FiEdit, FiEye, FiTrash2, FiUpload } from "react-icons/fi";
 
 const ManageStudents = () => {
-  const [students, setStudents] = useState([
-    {
-      id: 1,
-      firstname: "Aman",
-      lastname: "Verma",
-      email: "aman@gmail.com",
-      password: "1234",
-      mobile: "9876543210",
-      roll: "01",
-      class: "10th",
-    },
-    {
-      id: 2,
-      firstname: "Priya",
-      lastname: "Sharma",
-      email: "priya@gmail.com",
-      password: "abcd",
-      mobile: "9876500000",
-      roll: "02",
-      class: "9th",
-    },
-  ]);
-
-  const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState("");
-  const [selectedStudent, setSelectedStudent] = useState(null);
-
-  // new states for filter and search
-  const [selectedClass, setSelectedClass] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const fileInputRef = useRef();
-
-  // ✅ Open file dialog
-  const handleAddStudentExcel = () => {
-    fileInputRef.current.click();
-  };
-
-  // ✅ Handle file selection
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Validate only Excel files
-    const validExtensions = ["xlsx", "xls"];
-    const fileExtension = file.name.split(".").pop();
-    if (!validExtensions.includes(fileExtension)) {
-      alert("Please select a valid Excel file (.xls or .xlsx)");
-      return;
-    }
-
-    // Read Excel file
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      const data = evt.target.result;
-      const workbook = XLSX.read(data, { type: "binary" });
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(sheet);
-
-      // Add unique ID to each student
-      const newStudents = jsonData.map((s) => ({ ...s, id: Date.now() + Math.random() }));
-      setStudents((prev) => [...prev, ...newStudents]);
-    };
-    reader.readAsBinaryString(file);
-  };
-
-  const openModal = (type, student = null) => {
-    setModalType(type);
-    setSelectedStudent(student);
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setSelectedStudent(null);
-    setModalType("");
-  };
-
-  const handleDelete = () => {
-    setStudents(students.filter((s) => s.id !== selectedStudent.id));
-    closeModal();
-  };
-
-  // ✅ Search logic (only on button click)
-  const handleSearch = () => {
-    setSearchQuery(searchTerm);
-  };
-
-  // ✅ Filtered and searched list
-  const filteredStudents = students.filter((s) => {
-    const matchesClass = selectedClass === "All" || s.class === selectedClass;
-    const matchesSearch = `${s.firstname} ${s.lastname}`
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    return matchesClass && matchesSearch;
+  const [students, setStudents] = useState([]);
+  const [search, setSearch] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    lastname: "",
+    email: "",
+    password: "",
+    mobile: "",
+    class: "",
+    section: "",
+    rollNumber: "",
   });
 
-  // ✅ Unique class list for dropdown
-  const classList = ["All", ...new Set(students.map((s) => s.class))];
+  // ✅ Fetch all students
+  const fetchStudents = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(
+        "http://localhost:3000/api/admin/students/student/all",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setStudents(res.data);
+    } catch (err) {
+      console.error("Error fetching students:", err);
+      alert("❌ Failed to load students");
+    }
+  };
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  // ✅ Input change
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // ✅ Add new student
+  const handleAddStudent = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        "http://localhost:3000/api/admin/students/student/add",
+        form,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (res.status === 201) {
+        alert("🎉 Student added successfully!");
+        setForm({
+          name: "",
+          lastname: "",
+          email: "",
+          password: "",
+          mobile: "",
+          class: "",
+          section: "",
+          rollNumber: "",
+        });
+        fetchStudents();
+      }
+    } catch (err) {
+      console.error(err);
+      alert("❌ Failed to add student");
+    }
+  };
+
+  // ✅ Delete student
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this student?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.delete(
+        `http://localhost:3000/api/admin/students/student/delete/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (res.status === 200 || res.status === 204) {
+        alert("🗑️ Student deleted successfully!");
+        fetchStudents();
+      } else {
+        alert("⚠️ Something went wrong while deleting.");
+      }
+    } catch (err) {
+      console.error("Delete Error:", err);
+      alert("❌ Error deleting student. Check console for details.");
+    }
+  };
+
+  // ✅ Search Filter
+  const filtered = students.filter(
+    (s) =>
+      s.name?.toLowerCase().includes(search.toLowerCase()) ||
+      s.lastname?.toLowerCase().includes(search.toLowerCase()) ||
+      s.rollNumber?.toLowerCase().includes(search.toLowerCase()) ||
+      s.class?.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-slate-800">Manage Students</h2>
-        <button
-          onClick={handleAddStudentExcel}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition"
-        >
-          + Add Student with Excel
+    <div className="p-6 bg-gray-50 min-h-screen overflow-hidden">
+      <h2 className="text-2xl font-bold mb-6 text-slate-800">Manage Students</h2>
+
+      {/* ✅ Add Student Form */}
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
+        <form onSubmit={handleAddStudent} className="flex gap-2 flex-wrap">
+          <input
+            type="text"
+            name="name"
+            placeholder="First Name"
+            value={form.name}
+            onChange={handleChange}
+            required
+            className="border rounded-lg p-2"
+          />
+          <input
+            type="text"
+            name="lastname"
+            placeholder="Last Name"
+            value={form.lastname}
+            onChange={handleChange}
+            required
+            className="border rounded-lg p-2"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email (optional)"
+            value={form.email}
+            onChange={handleChange}
+            className="border rounded-lg p-2"
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+            className="border rounded-lg p-2"
+          />
+          <input
+            type="text"
+            name="mobile"
+            placeholder="Mobile"
+            value={form.mobile}
+            onChange={handleChange}
+            className="border rounded-lg p-2"
+          />
+          <input
+            type="text"
+            name="class"
+            placeholder="Class"
+            value={form.class}
+            onChange={handleChange}
+            required
+            className="border rounded-lg p-2"
+          />
+          <input
+            type="text"
+            name="section"
+            placeholder="Section"
+            value={form.section}
+            onChange={handleChange}
+            required
+            className="border rounded-lg p-2"
+          />
+          <input
+            type="text"
+            name="rollNumber"
+            placeholder="Roll No"
+            value={form.rollNumber}
+            onChange={handleChange}
+            required
+            className="border rounded-lg p-2"
+          />
+          <button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg"
+          >
+            Add
+          </button>
+        </form>
+
+        {/* ✅ Excel Upload */}
+        <button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+          <FiUpload /> Upload Excel
         </button>
-        {/* Hidden file input */}
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileUpload}
-          accept=".xlsx,.xls"
-          className="hidden"
-        />
       </div>
 
-      {/* 🔍 Filter + Search Section */}
-      <div className="flex flex-wrap items-center gap-4 mb-4">
-        <select
-          className="border border-gray-400 rounded-lg p-2"
-          value={selectedClass}
-          onChange={(e) => setSelectedClass(e.target.value)}
-        >
-          {classList.map((cls) => (
-            <option key={cls} value={cls}>
-              {cls === "All" ? "All Classes" : cls}
-            </option>
-          ))}
-        </select>
-
+      {/* ✅ Search Bar */}
+      <div className="mb-4">
         <input
           type="text"
-          placeholder="Search by student name..."
-          className="border border-gray-400 rounded-lg p-2 flex-1"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="🔍 Search by name, class, or roll no"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border w-full md:w-1/2 rounded-lg p-2 shadow-sm"
         />
-
-        <button
-          onClick={handleSearch}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition"
-        >
-          Search
-        </button>
       </div>
 
-      {/* Student Table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white p-4 rounded-2xl shadow-md"
-      >
-        {filteredStudents.length > 0 ? (
+      {/* ✅ Students Table */}
+      <div className="bg-white shadow-md rounded-lg overflow-y-auto max-h-[60vh]">
+        {filtered.length > 0 ? (
           <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-slate-800 text-white">
-                <th className="p-3 text-left">First Name</th>
-                <th className="p-3 text-left">Last Name</th>
-                <th className="p-3 text-left">Email</th>
+            <thead className="sticky top-0 bg-slate-800 text-white z-10">
+              <tr>
+                <th className="p-3 text-left">Name</th>
                 <th className="p-3 text-left">Class</th>
-                <th className="p-3 text-left">Roll</th>
+                <th className="p-3 text-left">Section</th>
+                <th className="p-3 text-left">Roll No</th>
                 <th className="p-3 text-left">Mobile</th>
-                <th className="p-3 text-center">Actions</th>
+                <th className="p-3 text-left">Email</th>
+                <th className="p-3 text-left">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredStudents.map((s) => (
+              {filtered.map((s) => (
                 <tr
-                  key={s.id}
-                  className="border-b hover:bg-slate-100 transition-all duration-200"
+                  key={s._id}
+                  className="border-b hover:bg-gray-100 transition-all"
                 >
-                  <td className="p-3">{s.firstname}</td>
-                  <td className="p-3">{s.lastname}</td>
-                  <td className="p-3">{s.email}</td>
+                  <td className="p-3">
+                    {s.name} {s.lastname}
+                  </td>
                   <td className="p-3">{s.class}</td>
-                  <td className="p-3">{s.roll}</td>
+                  <td className="p-3">{s.section}</td>
+                  <td className="p-3">{s.rollNumber}</td>
                   <td className="p-3">{s.mobile}</td>
-                  <td className="p-3 text-center">
-                    <button
-                      className="bg-blue-600 hover:bg-blue-700 text-white text-sm mr-2 px-3 py-1 rounded"
-                      onClick={() => openModal("view", s)}
-                    >
-                      View
+                  <td className="p-3">{s.email}</td>
+                  <td className="p-3 flex gap-3">
+                    <button className="text-blue-600 hover:text-blue-800">
+                      <FiEye />
+                    </button>
+                    <button className="text-yellow-500 hover:text-yellow-700">
+                      <FiEdit />
                     </button>
                     <button
-                      className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 rounded"
-                      onClick={() => openModal("delete", s)}
+                      onClick={() => handleDelete(s._id)}
+                      className="text-red-600 hover:text-red-800"
                     >
-                      Delete
+                      <FiTrash2 />
                     </button>
                   </td>
                 </tr>
@@ -205,99 +258,9 @@ const ManageStudents = () => {
             </tbody>
           </table>
         ) : (
-          <p className="text-center text-gray-500 p-4">
-            No students found for this class or search query.
-          </p>
+          <p className="text-gray-500 text-center p-4">No students found</p>
         )}
-      </motion.div>
-
-      {/* 🔽 Modal Section */}
-      <AnimatePresence>
-        {showModal && modalType === "view" && selectedStudent && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              className="bg-white rounded-2xl shadow-lg p-6 w-[400px]"
-            >
-              <h3 className="text-xl font-semibold mb-4 text-slate-700">
-                Student Details
-              </h3>
-              <p>
-                <strong>Name:</strong> {selectedStudent.firstname}{" "}
-                {selectedStudent.lastname}
-              </p>
-              <p>
-                <strong>Email:</strong> {selectedStudent.email}
-              </p>
-              <p>
-                <strong>Class:</strong> {selectedStudent.class}
-              </p>
-              <p>
-                <strong>Roll:</strong> {selectedStudent.roll}
-              </p>
-              <p>
-                <strong>Mobile:</strong> {selectedStudent.mobile}
-              </p>
-              <div className="text-right mt-4">
-                <button
-                  onClick={closeModal}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
-                >
-                  Close
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-
-        {showModal && modalType === "delete" && selectedStudent && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              className="bg-white rounded-2xl shadow-lg p-6 w-[400px]"
-            >
-              <h3 className="text-xl font-semibold mb-4 text-slate-700">
-                Confirm Delete
-              </h3>
-              <p>
-                Are you sure you want to delete{" "}
-                <strong>
-                  {selectedStudent.firstname} {selectedStudent.lastname}
-                </strong>
-                ?
-              </p>
-              <div className="flex justify-end mt-4 space-x-2">
-                <button
-                  onClick={closeModal}
-                  className="bg-gray-300 text-black hover:bg-gray-400 px-4 py-2 rounded-lg"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
-                >
-                  Delete
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </div>
     </div>
   );
 };
