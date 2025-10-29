@@ -18,17 +18,21 @@ import { useNavigate } from "react-router-dom";
 import ManageStudents from "./ManageStudent/ManageStudents";
 import ManageTeachers from "./ManageTeacher/Manageteacher";
 import AttendanceReport from "./AttendenceReport";
+import ManageClasses from "./Manageclass/ViewClassDetail";
+import MarkAttendance from "./Attendence/MarkAttendence"; // ✅ New Import
 
 export default function AdminDashboard({ admin, setUser }) {
   const [active, setActive] = useState("Dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const navigate = useNavigate();
 
+  // ✅ Added "Mark Attendance" in menu list
   const menuItems = [
     { name: "Dashboard", icon: <MdAssessment /> },
     { name: "Manage Student", icon: <FaUserPlus /> },
     { name: "Manage Teacher", icon: <FaChalkboardTeacher /> },
     { name: "Manage Classes", icon: <FaSchool /> },
+    { name: "Mark Attendance", icon: <MdOutlineAssignmentTurnedIn /> },
     { name: "Attendance Report", icon: <MdOutlineAssignmentTurnedIn /> },
     { name: "Homework Overview", icon: <FaBookOpen /> },
     { name: "Result Overview", icon: <MdLeaderboard /> },
@@ -147,6 +151,10 @@ export default function AdminDashboard({ admin, setUser }) {
             <ManageStudents />
           ) : active === "Manage Teacher" ? (
             <ManageTeachers />
+          ) : active === "Manage Classes" ? (
+            <ManageClasses />
+          ) : active === "Mark Attendance" ? ( // ✅ New Condition
+            <MarkAttendance />
           ) : active === "Attendance Report" ? (
             <AttendanceReport />
           ) : (
