@@ -17,6 +17,7 @@ const AttendanceReport = () => {
   const [percentage, setPercentage] = useState(null);
   const [studentName, setStudentName] = useState("");
   const [studentClass, setStudentClass] = useState("");
+  const [teacherName, setTeacherName] = useState("");
 
   // Demo Data
   const attendanceData = {
@@ -54,6 +55,10 @@ const AttendanceReport = () => {
     if (studentName && studentClass) setPercentage(80);
   };
 
+  const handleTeacherSubmit = () => {
+    if (teacherName) setPercentage(85);
+  };
+
   const fadeUp = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
@@ -63,26 +68,26 @@ const AttendanceReport = () => {
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-8">
       {/* Toggle Buttons */}
       <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-8">
-        <button
-          onClick={() => setSelectedOption("class")}
-          className={`w-full sm:w-auto px-6 py-2 rounded-lg font-semibold transition ${
-            selectedOption === "class"
-              ? "bg-blue-600 text-white shadow-md"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-          }`}
-        >
-          Class Report
-        </button>
-        <button
-          onClick={() => setSelectedOption("student")}
-          className={`w-full sm:w-auto px-6 py-2 rounded-lg font-semibold transition ${
-            selectedOption === "student"
-              ? "bg-pink-600 text-white shadow-md"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-          }`}
-        >
-          Student Report
-        </button>
+        {[
+          { label: "Class Report", value: "class", color: "blue" },
+          { label: "Student Report", value: "student", color: "pink" },
+          { label: "Teacher Report", value: "teacher", color: "indigo" }, // ✅ Added new
+        ].map((btn) => (
+          <button
+            key={btn.value}
+            onClick={() => {
+              setSelectedOption(btn.value);
+              setPercentage(null);
+            }}
+            className={`w-full sm:w-auto px-6 py-2 rounded-lg font-semibold transition ${
+              selectedOption === btn.value
+                ? `bg-${btn.color}-600 text-white shadow-md`
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            {btn.label}
+          </button>
+        ))}
       </div>
 
       {/* Report Section */}
@@ -288,6 +293,96 @@ const AttendanceReport = () => {
                         <tr
                           key={index}
                           className="odd:bg-white even:bg-gray-50 hover:bg-pink-50"
+                        >
+                          <td className="border p-2">{row.name}</td>
+                          <td className="border p-2">{row.value}%</td>
+                          <td
+                            className={`border p-2 font-semibold ${
+                              row.status === "Present"
+                                ? "text-green-600"
+                                : row.status === "Absent"
+                                ? "text-red-600"
+                                : "text-yellow-600"
+                            }`}
+                          >
+                            {row.status}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
+          </motion.div>
+        )}
+
+        {/* ✅ TEACHER REPORT SECTION */}
+        {selectedOption === "teacher" && (
+          <motion.div
+            key="teacher"
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="bg-white/80 backdrop-blur-md p-6 md:p-8 rounded-xl shadow-lg max-w-4xl mx-auto w-full"
+          >
+            <h2 className="text-2xl font-bold mb-5 text-gray-800 text-center sm:text-left">
+              Teacher Attendance Report
+            </h2>
+
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              <input
+                type="text"
+                placeholder="Enter Teacher Name"
+                value={teacherName}
+                onChange={(e) => setTeacherName(e.target.value)}
+                className="flex-1 border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              />
+              <button
+                onClick={handleTeacherSubmit}
+                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:scale-105 transition"
+              >
+                View Report
+              </button>
+            </div>
+
+            {percentage && (
+              <>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart
+                    data={attendanceData[filter]}
+                    margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis domain={[0, 100]} />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#6366f1"
+                      strokeWidth={3}
+                      dot={{ r: 4 }}
+                      activeDot={{ r: 8 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+
+                <div className="mt-6 overflow-x-auto">
+                  <table className="w-full text-center border-collapse">
+                    <thead>
+                      <tr className="bg-indigo-100">
+                        <th className="border p-2">Day</th>
+                        <th className="border p-2">Attendance %</th>
+                        <th className="border p-2">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {attendanceData[filter].map((row, index) => (
+                        <tr
+                          key={index}
+                          className="odd:bg-white even:bg-gray-50 hover:bg-indigo-50"
                         >
                           <td className="border p-2">{row.name}</td>
                           <td className="border p-2">{row.value}%</td>

@@ -1,26 +1,9 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion"; // eslint-disable-line
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";// eslint-disable-line
 
 const ManageTeachers = () => {
-  const [teachers, setTeachers] = useState([
-    {
-      id: 1,
-      name: "Ravi Kumar",
-      subject: "Mathematics",
-      email: "ravi@school.com",
-      contact: "9876543210",
-      assignedClass: "10th A",
-    },
-    {
-      id: 2,
-      name: "Neha Sharma",
-      subject: "English",
-      email: "neha@school.com",
-      contact: "9876500000",
-      assignedClass: "9th B",
-    },
-  ]);
-
+  const [teachers, setTeachers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
   const [selectedTeacher, setSelectedTeacher] = useState(null);
@@ -32,18 +15,33 @@ const ManageTeachers = () => {
     assignedClass: "",
   });
 
+  // 🔹 FETCH ALL TEACHERS (GET API)
+  useEffect(() => {
+    fetchTeachers();
+  }, []);
+
+  const fetchTeachers = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/api/teachers");
+      setTeachers(res.data);
+    } catch (err) {
+      console.error("Error fetching teachers:", err);
+    }
+  };
+
+  // 🔹 OPEN / CLOSE MODAL
   const openModal = (type, teacher = null) => {
     setModalType(type);
     setSelectedTeacher(teacher);
-    if (teacher) setFormData(teacher);
-    else
-      setFormData({
+    setFormData(
+      teacher || {
         name: "",
         subject: "",
         email: "",
         contact: "",
         assignedClass: "",
-      });
+      }
+    );
     setShowModal(true);
   };
 
@@ -53,36 +51,50 @@ const ManageTeachers = () => {
     setModalType("");
   };
 
-  const handleSave = () => {
-    if (modalType === "add") {
-      const newTeacher = { ...formData, id: Date.now() };
-      setTeachers([...teachers, newTeacher]);
-    } else if (modalType === "edit") {
-      setTeachers(
-        teachers.map((t) =>
-          t.id === selectedTeacher.id ? { ...t, ...formData } : t
-        )
-      );
+  // 🔹 ADD / EDIT / DELETE / ASSIGN APIs
+  const handleSave = async () => {
+    try {
+      if (modalType === "add") {
+        await axios.post("http://localhost:8080/api/teachers", formData);
+      } else if (modalType === "edit" && selectedTeacher) {
+        await axios.put(
+          `http://localhost:8080/api/teachers/${selectedTeacher.id}`,
+          formData
+        );
+      }
+      fetchTeachers();
+      closeModal();
+    } catch (err) {
+      console.error("Error saving teacher:", err);
     }
-    closeModal();
   };
 
-  const handleDelete = () => {
-    setTeachers(teachers.filter((t) => t.id !== selectedTeacher.id));
-    closeModal();
+  const handleDelete = async () => {
+    try {
+      await axios.delete(
+        `http://localhost:8080/api/teachers/${selectedTeacher.id}`
+      );
+      fetchTeachers();
+      closeModal();
+    } catch (err) {
+      console.error("Error deleting teacher:", err);
+    }
   };
 
-  const handleAssignClass = () => {
-    setTeachers(
-      teachers.map((t) =>
-        t.id === selectedTeacher.id
-          ? { ...t, assignedClass: formData.assignedClass }
-          : t
-      )
-    );
-    closeModal();
+  const handleAssignClass = async () => {
+    try {
+      await axios.patch(
+        `http://localhost:8080/api/teachers/${selectedTeacher.id}`,
+        { assignedClass: formData.assignedClass }
+      );
+      fetchTeachers();
+      closeModal();
+    } catch (err) {
+      console.error("Error assigning class:", err);
+    }
   };
 
+  // 🔹 UI PART
   return (
     <div className="p-8 bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen">
       {/* Header */}
@@ -98,7 +110,7 @@ const ManageTeachers = () => {
         </button>
       </div>
 
-      {/* Table Container */}
+      {/* Table */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -209,7 +221,6 @@ const ManageTeachers = () => {
                         />
                       )
                     )}
-
                     <div className="flex justify-end space-x-2 pt-4">
                       <button
                         onClick={closeModal}
