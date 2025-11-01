@@ -9,12 +9,11 @@ const ExamTimetable = () => {
   const [timeLeft, setTimeLeft] = useState("");
 
   useEffect(() => {
-    // Mock Exam Data
     const mockData = [
       {
         id: 1,
         subject: "Mathematics",
-        date: "2025-10-29", // today's date for testing
+        date: "2025-10-29",
         time: "10:09 AM - 10:10 AM",
         room: "Room 201",
         invigilator: "Mr. Sharma",
@@ -39,7 +38,6 @@ const ExamTimetable = () => {
     setExams(mockData);
   }, []);
 
-  // Helper — convert "12:00 PM" to Date object
   const parseTime = (timeStr) => {
     const [time, modifier] = timeStr.split(" ");
     let [hours, minutes] = time.split(":").map(Number);
@@ -50,7 +48,6 @@ const ExamTimetable = () => {
     return now;
   };
 
-  // Timer logic with remove animation after exam start
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
@@ -69,16 +66,13 @@ const ExamTimetable = () => {
       const diff = startTime - now;
 
       if (diff > 0 && diff <= 60 * 60 * 1000) {
-        // 1 hour before exam
-        setCurrentExam(todayExam);
         const mins = Math.floor((diff / 1000 / 60) % 60);
         const secs = Math.floor((diff / 1000) % 60);
+        setCurrentExam(todayExam);
         setTimeLeft(`${mins}m ${secs}s`);
       } else if (now >= startTime && now <= endTime) {
-        // during exam — show “Exam Started”
         setTimeLeft("🕒 Exam Started!");
       } else {
-        // after exam — remove timer smoothly
         setTimeout(() => setCurrentExam(null), 1000);
         setTimeLeft("");
       }
@@ -92,11 +86,12 @@ const ExamTimetable = () => {
     : exams;
 
   const handleDownload = () => {
-    alert("📄 Report downloaded successfully!");
+    alert("✅ Timetable downloaded successfully!");
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-6 flex flex-col items-center">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-amber-100 p-6 flex flex-col items-center">
+
       {/* Header */}
       <motion.div
         className="flex flex-col md:flex-row items-center justify-between w-full max-w-6xl mb-8 gap-4"
@@ -104,61 +99,54 @@ const ExamTimetable = () => {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="flex items-center gap-3">
-          <CalendarDaysIcon className="text-blue-600 w-8 h-8" />
-          <h1 className="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-700">
-            📅 Exam Timetable
+          <CalendarDaysIcon className="text-yellow-600 w-8 h-8" />
+          <h1 className="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-yellow-600 to-amber-700">
+            📅 Royal School Exam Timetable
           </h1>
         </div>
 
-        {/* Filter & Download */}
+        {/* Filter + Download */}
         <div className="flex gap-3 items-center">
           <input
             type="date"
             value={filterDate}
             onChange={(e) => setFilterDate(e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="border border-amber-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-500 outline-none"
           />
           <button
             onClick={() => setFilterDate("")}
-            className="bg-gray-100 px-3 py-2 rounded-lg hover:bg-gray-200 text-sm"
+            className="bg-yellow-100 px-3 py-2 rounded-lg hover:bg-yellow-200 text-sm"
           >
             Clear
           </button>
           <button
             onClick={handleDownload}
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg hover:scale-105 transition-transform"
+            className="flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-amber-600 text-white px-4 py-2 rounded-lg hover:scale-105 transition-transform"
           >
             <Download className="w-4 h-4" /> Download PDF
           </button>
         </div>
       </motion.div>
 
-      {/* Animated Timer */}
+      {/* Live Countdown */}
       <AnimatePresence>
         {currentExam && (
           <motion.div
             key={currentExam.id}
-            className={`w-full max-w-6xl mb-6 p-5 rounded-xl text-center shadow-lg
-            ${
-              timeLeft === "🕒 Exam Started!"
-                ? "bg-gradient-to-r from-yellow-500 to-orange-500"
-                : "bg-gradient-to-r from-green-500 to-teal-500"
-            } text-white`}
+            className={`w-full max-w-6xl mb-6 p-5 rounded-xl text-center shadow-lg text-white
+           ${
+             timeLeft === "🕒 Exam Started!"
+               ? "bg-gradient-to-r from-orange-500 to-yellow-600"
+               : "bg-gradient-to-r from-green-500 to-lime-500"
+           }`}
             initial={{ opacity: 0, scale: 0.8, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.7, y: -20 }}
-            transition={{ duration: 0.6 }}
           >
             <motion.div
               className="flex justify-center items-center gap-2 text-lg font-semibold"
-              animate={{
-                scale: [1, 1.05, 1],
-                rotate: [0, 2, -2, 0],
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-              }}
+              animate={{ scale: [1, 1.08, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
             >
               <Timer className="animate-pulse w-5 h-5" />
               {timeLeft === "🕒 Exam Started!" ? (
@@ -174,10 +162,10 @@ const ExamTimetable = () => {
       </AnimatePresence>
 
       {/* Table */}
-      <div className="w-full max-w-6xl overflow-x-auto shadow-xl rounded-2xl bg-white/80 backdrop-blur-lg border border-gray-100">
+      <div className="w-full max-w-6xl overflow-x-auto shadow-xl rounded-2xl bg-white/80 backdrop-blur-lg border border-yellow-200">
         <table className="min-w-full table-auto text-gray-700">
           <thead>
-            <tr className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm md:text-base">
+            <tr className="bg-gradient-to-r from-yellow-500 to-amber-600 text-white text-sm md:text-base">
               <th className="py-3 px-4 text-left">Subject</th>
               <th className="py-3 px-4 text-left">Time</th>
               <th className="py-3 px-4 text-left">Room</th>
@@ -188,23 +176,20 @@ const ExamTimetable = () => {
             {filteredExams.map((exam, index) => (
               <motion.tr
                 key={exam.id}
-                className={`border-b hover:bg-blue-50 transition-all ${
-                  index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                }`}
+                className={`${index % 2 === 0 ? "bg-white" : "bg-yellow-50"} border-b hover:bg-yellow-100 transition-all`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <td className="py-3 px-4 font-semibold flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-blue-500" />
+                <td className="py-3 px-4 flex items-center gap-2 font-semibold">
+                  <BookOpen className="text-yellow-600 w-4 h-4" />
                   {exam.subject}
                 </td>
                 <td className="py-3 px-4 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-gray-500" />
-                  {exam.time}
+                  <Clock className="text-gray-600 w-4 h-4" /> {exam.time}
                 </td>
                 <td className="py-3 px-4">{exam.room}</td>
-                <td className="py-3 px-4 text-gray-600">{exam.invigilator}</td>
+                <td className="py-3 px-4 text-gray-700">{exam.invigilator}</td>
               </motion.tr>
             ))}
           </tbody>
@@ -213,13 +198,11 @@ const ExamTimetable = () => {
 
       {/* Footer */}
       <motion.div
-        className="mt-8 text-gray-600 text-sm text-center"
+        className="mt-8 text-gray-700 text-sm text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
       >
-        Total Exams: <b>{filteredExams.length}</b> | Last Updated:{" "}
-        <b>Oct 29, 2025</b>
+        🏫 Academic Year: <b>2025</b> | Total Exams: <b>{filteredExams.length}</b>
       </motion.div>
     </div>
   );
