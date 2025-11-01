@@ -15,9 +15,9 @@ import MarksUpload from "./UplodeMarks";
 export default function TeacherDashboard({ setUser }) {
   const [active, setActive] = useState("Teacher Dashboard");
 
-  const handleLogout = () => {
-    setUser(null);
-    Navigate("/");
+    const handleLogout = () => {
+    if (setUser) setUser(null);
+    navigate("/");
   };
 
   const menuItems = [

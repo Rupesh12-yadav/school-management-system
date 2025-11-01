@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion"; // eslint-disable-line
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
   FaBook,
@@ -9,116 +9,131 @@ import {
   FaGraduationCap,
   FaRegCalendarCheck,
 } from "react-icons/fa";
-import { FiLogOut } from "react-icons/fi";
+import { FiLogOut, FiMenu } from "react-icons/fi";
 import Student_img from "../../assets/student.jpg";
+
+import Dashboard from "./Dashbaord";
+import Homework from "./Homework";
+import Attendance from "./Attention";
+import Notice from "./Notice";
+import Exam from "./Timetable";
+import Result from "./Result";
+import Leave from "./Leave";
 
 export default function StudentDashboard({ user, setUser }) {
   const [active, setActive] = useState("Dashboard");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [mobileMenu, setMobileMenu] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    setUser(null);
+    if (setUser) setUser(null);
     navigate("/");
   };
 
   const menuItems = [
-    { name: "Today's Homework", icon: <FaBook />, key: "homework" },
-    { name: "Attendance Report", icon: <FaClipboardList />, key: "attendance" },
-    { name: "View Notice", icon: <FaBullhorn />, key: "notice" },
-    { name: "Exam Timetable", icon: <FaCalendarAlt />, key: "exam" },
-    { name: "View Result", icon: <FaGraduationCap />, key: "result" },
-    { name: "Request for Leave", icon: <FaRegCalendarCheck />, key: "leave" },
+    { name: "Dashboard", icon: <FaGraduationCap /> },
+    { name: "Today's Homework", icon: <FaBook /> },
+    { name: "Attendance Report", icon: <FaClipboardList /> },
+    { name: "View Notice", icon: <FaBullhorn /> },
+    { name: "Exam Timetable", icon: <FaCalendarAlt /> },
+    { name: "View Result", icon: <FaGraduationCap /> },
+    { name: "Request for Leave", icon: <FaRegCalendarCheck /> },
   ];
 
+  const renderContent = () => {
+    switch (active) {
+      case "Dashboard": return <Dashboard />;
+      case "Today's Homework": return <Homework />;
+      case "Attendance Report": return <Attendance />;
+      case "View Notice": return <Notice />;
+      case "Exam Timetable": return <Exam />;
+      case "View Result": return <Result />;
+      case "Request for Leave": return <Leave />;
+      default: return <Dashboard />;
+    }
+  };
+
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-gray-100">
-      {/* Mobile Header */}
-      <div className="md:hidden flex justify-between items-center bg-white p-4 shadow-md">
-        <h1 className="text-lg font-bold">{active}</h1>
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="text-gray-700 text-3xl"
-        >
-          {isSidebarOpen ? "✖" : "☰"}
-        </button>
-      </div>
-
+    <div className="flex full-h-screen bg-yellow-50">
+      
       {/* Sidebar */}
-      <aside
-        className={`fixed md:static z-20 bg-white shadow-md flex flex-col items-center py-6 w-64 h-full transition-transform duration-300 ease-in-out
-        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
+      <motion.aside
+        animate={{ width: isSidebarOpen ? 240 : 80 }}
+        className={`bg-yellow-600 text-white p-4 flex flex-col shadow-xl fixed md:static z-50 h-full 
+          ${mobileMenu ? "left-0" : "-left-64"} md:left-0 transition-all duration-1`}
       >
-        <motion.img
-          src={Student_img}
-          alt="Profile"
-          className="w-20 h-20 md:w-24 md:h-24 rounded-full mb-4 object-cover border border-gray-200"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.5 }}
-        />
-        <h2 className="font-bold text-base md:text-lg">{user?.email || "shivangi.gour@gmail.com"}</h2>
-        <p className="text-gray-500 mb-6 text-sm md:text-base capitalize">
-          {user?.role || "Student"}
-        </p>
-
-        <nav className="flex-1 w-full px-4 space-y-3 overflow-y-auto">
-          {menuItems.map((item) => (
-            <motion.button
-              key={item.key}
-              onClick={() => {
-                setActive(item.name);
-                setIsSidebarOpen(false); // Close sidebar on mobile
-              }}
-              className={`flex items-center gap-3 w-full px-4 py-3 rounded-lg text-left font-medium transition-all duration-200 ${
-                active === item.name
-                  ? "bg-indigo-600 text-white shadow-lg"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {item.icon}
-              <span className="text-sm md:text-base">{item.name}</span>
-            </motion.button>
-          ))}
-        </nav>
-      </aside>
-
-      {/* Overlay for Mobile */}
-      {isSidebarOpen && (
-        <div
-          onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-black opacity-40 z-10 md:hidden"
-        ></div>
-      )}
-
-      {/* Main Content */}
-      <main className="flex-1 p-4 md:p-8 overflow-y-auto">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center sm:text-left">{active}</h1>
-          <motion.button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-100 transition text-sm md:text-base"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+        <div className="flex items-center justify-between mb-6">
+          {isSidebarOpen && <h1 className="text-lg font-bold">Student Panel</h1>}
+          <button
+            onClick={() => {
+              if (window.innerWidth < 768) {
+                setMobileMenu(false);
+              } else {
+                setIsSidebarOpen(!isSidebarOpen);
+              }
+            }}
+            className="text-yellow-200 hover:text-white"
           >
-            <FiLogOut /> Logout
-          </motion.button>
+            <FiMenu size={22} />
+          </button>
         </div>
 
-        <motion.div
-          key={active}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="bg-white p-6 rounded-xl shadow-sm"
-        >
-          <p className="text-gray-600">
-            {`You have selected "${active}". Content for this section will appear here.`}
-          </p>
-        </motion.div>
-      </main>
+        {/* Profile */}
+        <div className="flex flex-col items-center mb-5">
+          <img src={Student_img} className="w-12 h-12 rounded-full border-2 border-white shadow-md object-cover" />
+          {isSidebarOpen && (
+            <>
+              <h2 className="text-sm font-semibold mt-2">{user?.email || "student@example.com"}</h2>
+              <p className="text-yellow-100 text-xs">{user?.role || "Student"}</p>
+            </>
+          )}
+        </div>
+
+        {/* Menu */}
+        <nav className="space-y-2">
+          {menuItems.map((item) => (
+            <motion.div
+              key={item.name}
+              whileHover={{ scale: 1.03 }}
+              className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer
+                ${active === item.name ? "bg-white text-yellow-700 font-semibold" : "text-yellow-50 hover:bg-yellow-500"}`}
+              onClick={() => {
+                setActive(item.name);
+                setMobileMenu(false);
+              }}
+            >
+              <span className="text-lg">{item.icon}</span>
+              {isSidebarOpen && <span className="text-sm">{item.name}</span>}
+            </motion.div>
+          ))}
+        </nav>
+      </motion.aside>
+
+      {/* Main Content */}
+      <div className="flex-1 md:ml-0 ml-0 flex flex-col">
+        
+        {/* Header */}
+        <header className="bg-yellow-700 text-white flex justify-between items-center px-4 md:px-6 py-4 shadow-lg">
+          <button className="md:hidden text-2xl" onClick={() => setMobileMenu(true)}>
+            <FiMenu />
+          </button>
+
+          <h2 className="text-md md:text-lg font-bold">
+            Welcome, {user?.name || "Student"} 👋
+          </h2>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            onClick={handleLogout}
+            className="bg-white text-yellow-700 font-semibold px-3 md:px-4 py-2 rounded-xl shadow-md text-sm md:text-base"
+          >
+            <FiLogOut className="inline mr-1" /> Logout
+          </motion.button>
+        </header>
+
+        <main className="p-4 md:p-6 overflow-y-auto">{renderContent()}</main>
+      </div>
     </div>
   );
 }

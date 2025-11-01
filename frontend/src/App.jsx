@@ -9,7 +9,6 @@ import Login from "./Components/Login";
 import AdminDashboard from "./page/Admin/AdminDashboard";
 import TeacherDashboard from "./page/Teacher/TeacherDashboard";
 import StudentDashboard from "./page/Student/Dashboard";
-
 const AppRoutes = () => {
   return (
     <Routes>
@@ -51,9 +50,11 @@ const AppRoutes = () => {
         element={
           <PrivateRoute roles={["student"]}>
             <StudentDashboard />
+            
           </PrivateRoute>
         }
       />
+
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
