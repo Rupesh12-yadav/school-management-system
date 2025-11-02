@@ -20,6 +20,7 @@ import ManageTeachers from "./ManageTeacher/Manageteacher";
 import AttendanceReport from "./AttendenceReport";
 import ManageClasses from "./Manageclass/ViewClassDetail";
 import MarkAttendance from "./MarkAttendence/MarkAttendence";
+import HomeworkOverview from "./HomeworkOverview";
 
 
 export default function AdminDashboard({ admin, setUser }) {
@@ -158,7 +159,9 @@ export default function AdminDashboard({ admin, setUser }) {
            <MarkAttendance/>
           ) : active === "Attendance Report" ? (
             <AttendanceReport />
-          ) : (
+          ) : active ==="Homework Overview"?(
+            <HomeworkOverview/>
+          ): (
             <p className="text-gray-600">
               You selected <strong>{active}</strong>. Content for this section will appear here.
             </p>

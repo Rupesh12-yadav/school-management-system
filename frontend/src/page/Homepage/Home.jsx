@@ -1,6 +1,6 @@
 // Home.jsx
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";// eslint-disable-line
 import Navbar from "../../Components/Navbar";
 import heroImg from "../../assets/download (3).jpg";
 import Login from "../../Components/Login";
