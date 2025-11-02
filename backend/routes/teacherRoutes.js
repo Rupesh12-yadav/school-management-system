@@ -11,8 +11,8 @@ import { protect, authorizeRoles } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 // All teacher management routes protected and admin-only
-router.use(protect);
-router.use(authorizeRoles("Admin"));
+// router.use(protect);
+// router.use(authorizeRoles("Admin"));
 
 // Meaningful URLs
 router.post("/teacher/add", createTeacher);

@@ -19,7 +19,8 @@ import ManageStudents from "./ManageStudent/ManageStudents";
 import ManageTeachers from "./ManageTeacher/Manageteacher";
 import AttendanceReport from "./AttendenceReport";
 import ManageClasses from "./Manageclass/ViewClassDetail";
-import MarkAttendance from "./Attendence/MarkAttendence"; // ✅ New Import
+import MarkAttendance from "./MarkAttendence/MarkAttendence";
+
 
 export default function AdminDashboard({ admin, setUser }) {
   const [active, setActive] = useState("Dashboard");
@@ -154,7 +155,7 @@ export default function AdminDashboard({ admin, setUser }) {
           ) : active === "Manage Classes" ? (
             <ManageClasses />
           ) : active === "Mark Attendance" ? ( // ✅ New Condition
-            <MarkAttendance />
+           <MarkAttendance/>
           ) : active === "Attendance Report" ? (
             <AttendanceReport />
           ) : (
