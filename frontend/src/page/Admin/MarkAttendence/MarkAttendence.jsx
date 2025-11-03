@@ -9,7 +9,7 @@ export default function MarkAttendance() {
   const [selectedType, setSelectedType] = useState(null);
 
   if (selectedType === "student") return <StudentAttendance goBack={()=>setSelectedType(null)}/> ;
-  if (selectedType === "teacher") return  <TeacherAttendance goBack={()=>selectedType(null)}/>;
+  if (selectedType === "teacher") return  <TeacherAttendance goBack={()=>setSelectedType(null)}/>;
 
   return (
     <motion.div

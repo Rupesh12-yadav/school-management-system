@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";// eslint-disable-line
+import { motion } from "framer-motion"; // eslint-disable-line
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,8 +9,8 @@ import { useNavigate } from "react-router-dom";
 const Login = ({ closeLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useAuth();
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

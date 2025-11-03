@@ -56,3 +56,11 @@ http://localhost:3000/api/admin/teachers/teacher/all
         </motion.button>
       </div>
     </div>
+
+    //// teacher 
+    neha.verma@example.com
+    Neha@12345
+
+    ///// student
+    narendra@example.com
+    INDIA

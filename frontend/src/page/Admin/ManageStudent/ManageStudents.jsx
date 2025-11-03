@@ -22,9 +22,7 @@ const ManageStudents = () => {
       const token = localStorage.getItem("token");
       const res = await axios.get(
         "http://localhost:3000/api/admin/students/student/all",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setStudents(res.data);
     } catch (err) {
@@ -79,12 +77,9 @@ const ManageStudents = () => {
 
     try {
       const token = localStorage.getItem("token");
-
       const res = await axios.delete(
         `http://localhost:3000/api/admin/students/student/delete/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (res.status === 200 || res.status === 204) {
@@ -109,112 +104,69 @@ const ManageStudents = () => {
   );
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen overflow-hidden">
-      <h2 className="text-2xl font-bold mb-6 text-slate-800">Manage Students</h2>
+    <div className="p-8 bg-gradient-to-br min-h-screen">
+      <h2 className="text-3xl font-bold mb-6 text-[var(--text-secondary)]">🎓 Manage Students</h2>
 
       {/* ✅ Add Student Form */}
-      <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
-        <form onSubmit={handleAddStudent} className="flex gap-2 flex-wrap">
-          <input
-            type="text"
-            name="name"
-            placeholder="First Name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            className="border rounded-lg p-2"
-          />
-          <input
-            type="text"
-            name="lastname"
-            placeholder="Last Name"
-            value={form.lastname}
-            onChange={handleChange}
-            required
-            className="border rounded-lg p-2"
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email (optional)"
-            value={form.email}
-            onChange={handleChange}
-            className="border rounded-lg p-2"
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-            className="border rounded-lg p-2"
-          />
-          <input
-            type="text"
-            name="mobile"
-            placeholder="Mobile"
-            value={form.mobile}
-            onChange={handleChange}
-            className="border rounded-lg p-2"
-          />
-          <input
-            type="text"
-            name="class"
-            placeholder="Class"
-            value={form.class}
-            onChange={handleChange}
-            required
-            className="border rounded-lg p-2"
-          />
-          <input
-            type="text"
-            name="section"
-            placeholder="Section"
-            value={form.section}
-            onChange={handleChange}
-            required
-            className="border rounded-lg p-2"
-          />
-          <input
-            type="text"
-            name="rollNumber"
-            placeholder="Roll No"
-            value={form.rollNumber}
-            onChange={handleChange}
-            required
-            className="border rounded-lg p-2"
-          />
+      <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
+        <form
+          onSubmit={handleAddStudent}
+          className="flex flex-wrap items-center gap-3"
+        >
+          {[
+            { name: "name", placeholder: "First Name" },
+            { name: "lastname", placeholder: "Last Name" },
+            { name: "email", placeholder: "Email (optional)", type: "email" },
+            { name: "password", placeholder: "Password", type: "password" },
+            { name: "mobile", placeholder: "Mobile" },
+            { name: "class", placeholder: "Class" },
+            { name: "section", placeholder: "Section" },
+            { name: "rollNumber", placeholder: "Roll No" },
+          ].map((input) => (
+            <input
+              key={input.name}
+              type={input.type || "text"}
+              name={input.name}
+              placeholder={input.placeholder}
+              value={form[input.name]}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-xl p-2 w-[180px] focus:ring-2 focus:ring-blue-500 outline-none"
+              required={input.name !== "email" && input.name !== "mobile"}
+            />
+          ))}
+
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg"
+            className=" bg-[var(--button-primary-text)] text-[var(--button-primary-bg)] font-semibold px-5 py-2 rounded-xl shadow-md"
           >
-            Add
+            ➕ Add Student
+          </button>    
+
+          <button
+            type="button"
+            className="flex items-center gap-2 bg-[var(--sidebar-active)] text-[var(--button-primary-bg)]  hover:bg-[var(--button-primary-text)]  px-4 py-2 rounded-xl shadow-md"
+          >
+            <FiUpload /> Uploade
           </button>
         </form>
-
-        {/* ✅ Excel Upload */}
-        <button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
-          <FiUpload /> Upload Excel
-        </button>
       </div>
 
       {/* ✅ Search Bar */}
-      <div className="mb-4">
+      <div className="mb-5">
         <input
           type="text"
           placeholder="🔍 Search by name, class, or roll no"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="border w-full md:w-1/2 rounded-lg p-2 shadow-sm"
+          className="border w-full md:w-1/2 rounded-xl p-3 shadow-sm focus:ring-2 focus:ring-yellow-400 outline-none"
         />
       </div>
 
       {/* ✅ Students Table */}
-      <div className="bg-white shadow-md rounded-lg overflow-y-auto max-h-[60vh]">
+      <div className="bg-white shadow-md rounded-2xl overflow-y-auto max-h-[60vh]">
         {filtered.length > 0 ? (
-          <table className="w-full border-collapse">
-            <thead className="sticky top-0 bg-slate-800 text-white z-10">
+          <table className="w-full border-collapse text-gray-800">
+            <thead className="sticky top-0 bg-gradient-to-r from-yellow-200 to-yellow-100 text-gray-800">
               <tr>
                 <th className="p-3 text-left">Name</th>
                 <th className="p-3 text-left">Class</th>
@@ -229,7 +181,7 @@ const ManageStudents = () => {
               {filtered.map((s) => (
                 <tr
                   key={s._id}
-                  className="border-b hover:bg-gray-100 transition-all"
+                  className="border-b hover:bg-yellow-50 transition-all"
                 >
                   <td className="p-3">
                     {s.name} {s.lastname}
@@ -243,7 +195,7 @@ const ManageStudents = () => {
                     <button className="text-blue-600 hover:text-blue-800">
                       <FiEye />
                     </button>
-                    <button className="text-yellow-500 hover:text-yellow-700">
+                    <button className="text-amber-500 hover:text-amber-700">
                       <FiEdit />
                     </button>
                     <button

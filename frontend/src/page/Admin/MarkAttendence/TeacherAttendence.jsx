@@ -1,6 +1,6 @@
-// 📁 src/components/Attendence/TeacherAttendance.jsx
-import React, { useState } from "react";
-import { motion } from "framer-motion";// eslint-disable-line
+// 📁 src/components/Attendance/TeacherAttendance.jsx
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion"; // eslint-disable-line
 
 export default function TeacherAttendance({ goBack }) {
   const teachers = [
@@ -10,59 +10,183 @@ export default function TeacherAttendance({ goBack }) {
   ];
 
   const [attendance, setAttendance] = useState({});
+  const [savedAttendance, setSavedAttendance] = useState(null);
+  const [viewMode, setViewMode] = useState("mark"); // mark | view | completed
+
+  // ✅ Load saved data from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem("teacherAttendance");
+    if (stored) setSavedAttendance(JSON.parse(stored));
+  }, []);
+
+  // ✅ Save attendance to localStorage whenever updated
+  useEffect(() => {
+    if (savedAttendance)
+      localStorage.setItem("teacherAttendance", JSON.stringify(savedAttendance));
+  }, [savedAttendance]);
 
   const handleMark = (id, status) => {
+    if (viewMode === "view" || viewMode === "completed") return;
     setAttendance((prev) => ({ ...prev, [id]: status }));
   };
 
+  const handleSave = () => {
+    const currentDate = new Date().toLocaleDateString();
+    setSavedAttendance({
+      data: attendance,
+      date: currentDate,
+    });
+    setViewMode("completed");
+  };
+
+  const handleView = () => {
+    setAttendance(savedAttendance.data);
+    setViewMode("view");
+  };
+
+  const handleEdit = () => {
+    setAttendance(savedAttendance.data);
+    setViewMode("mark");
+  };
+
+  const allMarked =
+    teachers.length > 0 && teachers.every((t) => attendance[t.id]);
+
   return (
-    <div className="p-6 bg-white rounded-2xl shadow-lg">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="p-8 bg-white rounded-2xl shadow-lg max-w-4xl mx-auto w-full"
+    >
+      {/* 🔙 Back Button */}
       <button
         onClick={goBack}
-        className="mb-4 px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+        className="mb-6 px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
       >
         ← Back
       </button>
 
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800">Teacher Attendance</h2>
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="bg-green-100">
-            <th className="p-3 text-left">Name</th>
-            <th className="p-3 text-center">Mark Attendance</th>
-          </tr>
-        </thead>
-        <tbody>
-          {teachers.map((teacher) => (
-            <motion.tr
-              key={teacher.id}
-              whileHover={{ scale: 1.02 }}
-              className="border-b"
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
+        Teacher Attendance
+      </h2>
+
+      {/* 🗂️ Saved Record */}
+      {savedAttendance && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex justify-between items-center bg-gray-50 border rounded-xl p-4 shadow-sm mb-8"
+        >
+          <div className="font-semibold text-gray-800">Previous Attendance</div>
+          <div className="font-semibold text-gray-700">
+            📅 {savedAttendance.date}
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleView}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
             >
-              <td className="p-3">{teacher.name}</td>
-              <td className="p-3 text-center space-x-3">
-                {["Present", "Absent", "Leave"].map((status) => (
-                  <button
-                    key={status}
-                    onClick={() => handleMark(teacher.id, status)}
-                    className={`px-3 py-1 rounded-lg ${
-                      attendance[teacher.id] === status
-                        ? status === "Present"
-                          ? "bg-green-500 text-white"
-                          : status === "Absent"
-                          ? "bg-red-500 text-white"
-                          : "bg-yellow-500 text-white"
-                        : "bg-gray-200 hover:bg-gray-300"
-                    }`}
-                  >
-                    {status}
-                  </button>
-                ))}
-              </td>
-            </motion.tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+              View
+            </button>
+            <button
+              onClick={handleEdit}
+              className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
+            >
+              Edit
+            </button>
+          </div>
+        </motion.div>
+      )}
+
+      {/* 🧾 Attendance Table */}
+      {(viewMode === "mark" || viewMode === "view") && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+        >
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-green-50 border-b">
+                <th className="p-3 text-left text-gray-700 font-semibold">
+                  Name
+                </th>
+                <th className="p-3 text-center text-gray-700 font-semibold">
+                  Mark Attendance
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {teachers.map((teacher) => (
+                <motion.tr
+                  key={teacher.id}
+                  whileHover={{ scale: 1.01 }}
+                  className="border-b hover:bg-gray-50"
+                >
+                  <td className="p-3">{teacher.name}</td>
+                  <td className="p-3 text-center space-x-3">
+                    {["Present", "Absent", "Leave"].map((status) => {
+                      const isActive = attendance[teacher.id] === status;
+                      const base =
+                        "px-4 py-2 rounded-full font-medium transition-all duration-200";
+                      const styles = {
+                        Present: isActive
+                          ? "bg-green-500 text-white shadow-md scale-105"
+                          : "bg-green-100 text-green-700 hover:bg-green-200",
+                        Absent: isActive
+                          ? "bg-red-500 text-white shadow-md scale-105"
+                          : "bg-red-100 text-red-700 hover:bg-red-200",
+                        Leave: isActive
+                          ? "bg-yellow-500 text-white shadow-md scale-105"
+                          : "bg-yellow-100 text-yellow-700 hover:bg-yellow-200",
+                      };
+
+                      return (
+                        <motion.button
+                          key={status}
+                          whileTap={{ scale: 0.95 }}
+                          disabled={viewMode === "view"}
+                          onClick={() => handleMark(teacher.id, status)}
+                          className={`${base} ${styles[status]} ${
+                            viewMode === "view"
+                              ? "opacity-60 cursor-not-allowed"
+                              : ""
+                          }`}
+                        >
+                          {status}
+                        </motion.button>
+                      );
+                    })}
+                  </td>
+                </motion.tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* 💾 Save Button */}
+          {allMarked && viewMode === "mark" && (
+            <motion.div
+              className="flex justify-center mt-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <button
+                onClick={handleSave}
+                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-md"
+              >
+                💾 Save Attendance
+              </button>
+            </motion.div>
+          )}
+        </motion.div>
+      )}
+
+      {!savedAttendance && (
+        <p className="text-gray-500 text-center mt-10">
+          Please mark attendance for teachers.
+        </p>
+      )}
+    </motion.div>
   );
 }
