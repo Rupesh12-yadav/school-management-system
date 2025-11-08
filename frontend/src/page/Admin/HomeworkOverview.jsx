@@ -100,7 +100,7 @@ const HomeworkOverview = () => {
   const teacherOptions = [...new Set(homeworkData.map((item) => item.teacher))];
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-purple-100 min-h-screen p-6 overflow-hidden relative">
+    <div className="bg-gradient-to-br min-h-screen p-6 overflow-hidden relative">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-slate-800">
@@ -180,16 +180,17 @@ const HomeworkOverview = () => {
       </div>
 
       {/* Scrollable Cards Section */}
-      <div className="bg-white rounded-xl shadow-md overflow-y-auto max-h-[70vh] p-5">
-        {filteredHomework.length > 0 ? (
-          <div className="flex flex-col gap-5">
-            {filteredHomework.map((item, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.01 }}
-                transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                className="border border-gray-200 rounded-xl shadow-sm hover:shadow-purple-300 hover:border-purple-400 transition-all duration-300 p-5"
-              >
+      <div className="rounded-xl overflow-y-auto max-h-[70vh] p-5 ">
+  {filteredHomework.length > 0 ? (
+    <div className="flex flex-col gap-5">
+      {filteredHomework.map((item, index) => (
+        <motion.div
+          key={index}
+          whileHover={{ scale: 1.02, y: -3 }} // thoda upar uthta hua feel
+          transition={{ type: "spring", stiffness: 200, damping: 15 }}
+          style={{background:"var(--card-bg)"}}
+          className="border border-gray-100 rounded-xl shadow-2xl hover:border-transparent  p-5"
+        >
                 {/* Card Content */}
                 <div className="flex flex-wrap items-center justify-between text-gray-700 gap-3 sm:gap-4">
                   <p className="font-semibold text-purple-700 text-lg">

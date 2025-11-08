@@ -93,12 +93,17 @@ export default function StudentAttendance({ goBack }) {
       {/* 🔙 Back Button */}
       <button
         onClick={goBack}
-        className="mb-6 px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
+         style={{
+          backgroundColor: "var(--primary-color)",
+          color: "var(--button-text)",
+          boxShadow: "0 3px 6px rgba(0,0,0,0.2)",
+        }}
+        className="font-semibold px-4 py-2 rounded-xl transition"
       >
         ← Back
       </button>
 
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
+      <h2 className="text-2xl font-semibold mb-6 text-[var()] text-center">
         Student Attendance
       </h2>
 

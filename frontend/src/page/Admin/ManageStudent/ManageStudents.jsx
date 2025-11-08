@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+/* eslint-disable no-unused-vars */
+import React, { useState } from "react";
 import { FiEdit, FiEye, FiTrash2, FiUpload } from "react-icons/fi";
+import {
+  useGetStudentsQuery,
+  useAddStudentMutation,
+  useDeleteStudentMutation,
+  useUpdateStudentMutation,
+} from "../../../../Api/SchoolApi"; // ✅ RTK hooks
 
 const ManageStudents = () => {
-  const [students, setStudents] = useState([]);
   const [search, setSearch] = useState("");
+  const [editingId, setEditingId] = useState(null); // ✅ Edit mode track karega
   const [form, setForm] = useState({
     name: "",
     lastname: "",
@@ -16,85 +22,72 @@ const ManageStudents = () => {
     rollNumber: "",
   });
 
-  // ✅ Fetch all students
-  const fetchStudents = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(
-        "http://localhost:3000/api/admin/students/student/all",
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setStudents(res.data);
-    } catch (err) {
-      console.error("Error fetching students:", err);
-      alert("❌ Failed to load students");
-    }
-  };
+  // ✅ RTK Query Hooks
+  const { data: students = [], isLoading, isError, refetch } = useGetStudentsQuery();
+  const [addStudent] = useAddStudentMutation();
+  const [deleteStudent] = useDeleteStudentMutation();
+  const [updateStudent] = useUpdateStudentMutation();
 
-  useEffect(() => {
-    fetchStudents();
-  }, []);
-
-  // ✅ Input change
+  // ✅ Handle input change
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ Add new student
+  // ✅ Add or Update Student
   const handleAddStudent = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.post(
-        "http://localhost:3000/api/admin/students/student/add",
-        form,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      if (editingId) {
+        // 🔹 Update Mode
+        await updateStudent({ id: editingId, data: form }).unwrap();
 
-      if (res.status === 201) {
+        alert("✅ Student updated successfully!");
+        setEditingId(null);
+      } else {
+        // 🔹 Add Mode
+        await addStudent(form).unwrap();
         alert("🎉 Student added successfully!");
-        setForm({
-          name: "",
-          lastname: "",
-          email: "",
-          password: "",
-          mobile: "",
-          class: "",
-          section: "",
-          rollNumber: "",
-        });
-        fetchStudents();
       }
+
+      // Reset form
+      setForm({
+        name: "",
+        lastname: "",
+        email: "",
+        password: "",
+        mobile: "",
+        class: "",
+        section: "",
+        rollNumber: "",
+      });
+      refetch();
     } catch (err) {
-      console.error(err);
-      alert("❌ Failed to add student");
+      console.error("❌ Operation failed:", err);
+      alert("❌ Something went wrong");
     }
   };
 
-  // ✅ Delete student
+  // ✅ Delete Student
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this student?")) return;
-
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.delete(
-        `http://localhost:3000/api/admin/students/student/delete/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (res.status === 200 || res.status === 204) {
-        alert("🗑️ Student deleted successfully!");
-        fetchStudents();
-      } else {
-        alert("⚠️ Something went wrong while deleting.");
-      }
+      await deleteStudent(id).unwrap();
+      alert("🗑️ Student deleted successfully!");
+      refetch();
     } catch (err) {
       console.error("Delete Error:", err);
-      alert("❌ Error deleting student. Check console for details.");
+      alert("❌ Error deleting student");
     }
   };
 
-  // ✅ Search Filter
+  // ✅ Edit Student (fill data in form)
+  const handleEditClick = (student) => {
+    setForm(student); // Form me uska data bhar do
+    setEditingId(student._id); // Edit mode ON
+    window.scrollTo({ top: 0, behavior: "smooth" }); // Form tak scroll
+  };
+
+  // ✅ Filter for search
   const filtered = students.filter(
     (s) =>
       s.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -103,16 +96,22 @@ const ManageStudents = () => {
       s.class?.toLowerCase().includes(search.toLowerCase())
   );
 
+  if (isLoading) return <p className="p-6 text-gray-600">⏳ Loading students...</p>;
+  if (isError) return <p className="p-6 text-red-600">❌ Error loading students.</p>;
+
   return (
     <div className="p-8 bg-gradient-to-br min-h-screen">
-      <h2 className="text-3xl font-bold mb-6 text-[var(--text-secondary)]">🎓 Manage Students</h2>
+      <h2 className="text-3xl font-bold mb-6 text-[var(--text-secondary)]">
+        🎓 Manage Students
+      </h2>
 
-      {/* ✅ Add Student Form */}
-      <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
-        <form
-          onSubmit={handleAddStudent}
-          className="flex flex-wrap items-center gap-3"
-        >
+      {/* ✅ Add / Update Student Form */}
+      <div
+        className={`rounded-2xl shadow-md p-6 mb-6 transition-all duration-300 ${
+          editingId ? "bg-yellow-50 border border-yellow-400" : "bg-white"
+        }`}
+      >
+        <form onSubmit={handleAddStudent} className="flex flex-wrap items-center gap-3">
           {[
             { name: "name", placeholder: "First Name" },
             { name: "lastname", placeholder: "Last Name" },
@@ -128,7 +127,7 @@ const ManageStudents = () => {
               type={input.type || "text"}
               name={input.name}
               placeholder={input.placeholder}
-              value={form[input.name]}
+              value={form[input.name] || ""}
               onChange={handleChange}
               className="border border-gray-300 rounded-xl p-2 w-[180px] focus:ring-2 focus:ring-blue-500 outline-none"
               required={input.name !== "email" && input.name !== "mobile"}
@@ -137,17 +136,23 @@ const ManageStudents = () => {
 
           <button
             type="submit"
-            className=" bg-[var(--button-primary-text)] text-[var(--button-primary-bg)] font-semibold px-5 py-2 rounded-xl shadow-md"
+            className={`${
+              editingId
+                ? "bg-yellow-500 hover:bg-yellow-600"
+                : "bg-blue-600 hover:bg-blue-700"
+            } text-white font-semibold px-5 py-2 rounded-lg shadow-md transition-all duration-200`}
           >
-            ➕ Add Student
-          </button>    
-
-          <button
-            type="button"
-            className="flex items-center gap-2 bg-[var(--sidebar-active)] text-[var(--button-primary-bg)]  hover:bg-[var(--button-primary-text)]  px-4 py-2 rounded-xl shadow-md"
-          >
-            <FiUpload /> Uploade
+            {editingId ? "✏️ Update Student" : "➕ Add Student"}
           </button>
+
+          {!editingId && (
+            <button
+              type="button"
+              className="flex items-center gap-2 bg-[var(--button-uplode)] text-white hover:bg-[var(--button-ulode-hover)] px-4 py-2 rounded-xl shadow-md"
+            >
+              <FiUpload /> Upload Excel
+            </button>
+          )}
         </form>
       </div>
 
@@ -166,7 +171,10 @@ const ManageStudents = () => {
       <div className="bg-white shadow-md rounded-2xl overflow-y-auto max-h-[60vh]">
         {filtered.length > 0 ? (
           <table className="w-full border-collapse text-gray-800">
-            <thead className="sticky top-0 bg-gradient-to-r from-yellow-200 to-yellow-100 text-gray-800">
+            <thead
+              className="sticky top-0 bg-gradient-to-r"
+              style={{ background: "var(--gradient-yellow)" }}
+            >
               <tr>
                 <th className="p-3 text-left">Name</th>
                 <th className="p-3 text-left">Class</th>
@@ -179,23 +187,19 @@ const ManageStudents = () => {
             </thead>
             <tbody>
               {filtered.map((s) => (
-                <tr
-                  key={s._id}
-                  className="border-b hover:bg-yellow-50 transition-all"
-                >
-                  <td className="p-3">
-                    {s.name} {s.lastname}
-                  </td>
+                <tr key={s._id} className="border-b hover:bg-yellow-50 transition-all">
+                  <td className="p-3">{s.name} {s.lastname}</td>
                   <td className="p-3">{s.class}</td>
                   <td className="p-3">{s.section}</td>
                   <td className="p-3">{s.rollNumber}</td>
                   <td className="p-3">{s.mobile}</td>
                   <td className="p-3">{s.email}</td>
                   <td className="p-3 flex gap-3">
-                    <button className="text-blue-600 hover:text-blue-800">
-                      <FiEye />
-                    </button>
-                    <button className="text-amber-500 hover:text-amber-700">
+                    <button className="text-blue-600 hover:text-blue-800"><FiEye /></button>
+                    <button
+                      onClick={() => handleEditClick(s)}
+                      className="text-amber-500 hover:text-amber-700"
+                    >
                       <FiEdit />
                     </button>
                     <button

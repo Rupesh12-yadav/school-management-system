@@ -45,8 +45,8 @@ const ManageTeachers = () => {
     setSelectedTeacher(teacher);
     setFormData(
       teacher || {
-        name: "",
-        subject: "",
+        name: teacher.name,
+        subject: teacher.subject,
         email: "",
         contact: "",
         assignedClass: "",
@@ -133,7 +133,7 @@ const ManageTeachers = () => {
 
   // 🔹 UI PART (unchanged)
   return (
-    <div className="p-8 bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen">
+    <div className="p-8  min-h-screen">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-3xl font-bold text-gray-800 tracking-tight">
@@ -155,7 +155,7 @@ const ManageTeachers = () => {
       >
         {teachers.length > 0 ? (
           <table className="min-w-full border-collapse">
-            <thead className="bg-slate-800 text-white">
+            <thead style={{background:"var(--gradient-yellow)"}}>
               <tr>
                 <th className="p-4 text-left font-medium">Name</th>
                 <th className="p-4 text-left font-medium">Subject</th>

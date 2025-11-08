@@ -23,19 +23,19 @@ export default function MarkAttendance() {
         <motion.div
           whileHover={{ scale: 1.05 }}
           onClick={() => setSelectedType("student")}
-          className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-10 py-6 rounded-2xl shadow-md flex flex-col items-center"
+          className="cursor-pointer bg-[var(--card-bg)] hover:bg-[var(--button-secondary-hover)] text-white px-10 py-6 rounded-2xl shadow-2xl flex flex-col items-center"
         >
-          <FaUserGraduate size={40} className="mb-3" />
-          <h3 className="text-lg font-semibold">Student Attendance</h3>
+          <FaUserGraduate size={40} className="mb-3 text-[var(--text-primary)]" />
+          <h3 className="text-lg text-[var(--text-primary)] font-semibold">Student Attendance</h3>
         </motion.div>
 
         <motion.div
           whileHover={{ scale: 1.05 }}
           onClick={() => setSelectedType("teacher")}
-          className="cursor-pointer bg-green-600 hover:bg-green-700 text-white px-10 py-6 rounded-2xl shadow-md flex flex-col items-center"
+          className="cursor-pointer bg-[var(--card-bg)] hover:bg-[var(--button-secondary-hover)] text-white px-10 py-6 rounded-2xl shadow-2xl flex flex-col items-center"
         >
-          <FaChalkboardTeacher size={40} className="mb-3" />
-          <h3 className="text-lg font-semibold">Teacher Attendance</h3>
+          <FaChalkboardTeacher size={40} className="mb-3 text-[var(--text-primary)]" />
+          <h3 className="text-lg text-[var(--text-primary)] font-semibold">Teacher Attendance</h3>
         </motion.div>
       </div>
     </motion.div>

@@ -43,7 +43,7 @@ const ManageClasses = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-300 p-6 flex justify-center">
+    <div className="min-h-screen  p-6 flex justify-center">
       <motion.div
         className="bg-white shadow-2xl rounded-2xl p-6 w-full max-w-5xl"
         initial={{ opacity: 0, y: 50 }}
@@ -67,7 +67,7 @@ const ManageClasses = () => {
               </button>
               <div className="mt-6 overflow-x-auto">
                 <table className="min-w-full border border-gray-300 text-center rounded-lg overflow-hidden">
-                  <thead className="bg-slate-800 text-white">
+                  <thead style={{background:"var(--gradient-yellow)"}}>
                     <tr>
                       <th className="py-2 px-4">Class</th>
                       <th className="py-2 px-4">Class Teacher</th>

@@ -22,14 +22,14 @@ const Navbar = ({ onLoginClick }) => {
           <li><Link to="/contact" className="hover:text-yellow-500 transition">Contact</Link></li>
         </ul>
 
-        <div className="hidden md:block">
+        {/* <div className="hidden md:block">
           <button
             onClick={onLoginClick}
             className="bg-yellow-400 text-white px-6 py-2 rounded-full font-semibold hover:bg-yellow-500 transition shadow"
           >
             Log In
           </button>
-        </div>
+        </div> */}
 
         {/* Mobile menu toggle */}
         <button

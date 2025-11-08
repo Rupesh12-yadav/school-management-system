@@ -1,33 +1,33 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion"; // eslint-disable-line
-import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useAuth } from "../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useLoginMutation } from "../../Api/SchoolApi"; // ✅ RTK Query hook
+import { setCredentials } from "../../Api/authSlice"; // ✅ Redux action
 
 const Login = ({ closeLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const dispatch = useDispatch();
+
+  const [login, { isLoading }] = useLoginMutation(); // ✅ RTK mutation hook
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post("http://localhost:3000/api/auth/login", {
-        email,
-        password,
-      });
+      const data = await login({ email, password }).unwrap(); // ✅ auto API call
 
-      if (data.token) {
-        login({ token: data.token, role: data.role, email: data.email });
+      if (data?.token) {
+        dispatch(setCredentials({ token: data.token, role: data.role })); // ✅ store me save
         toast.success("Login successful!", { autoClose: 1500 });
 
         setTimeout(() => {
-          switch (data.role.toLowerCase()) {
+          switch (data.role?.toLowerCase()) {
             case "admin":
-              navigate("/admin-dashboard");
+              navigate("/admin-dashboard");a
               break;
             case "teacher":
               navigate("/teacher-dashboard");
@@ -40,11 +40,13 @@ const Login = ({ closeLogin }) => {
           }
         }, 1500);
       } else {
-        toast.error(data.message || "Login failed", { autoClose: 3000 });
+        toast.error(data?.message || "Login failed", { autoClose: 3000 });
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong", {
+      console.log(error)
+      toast.error(error?.data?.message || "Something went wrong", {
         autoClose: 3000,
+        
       });
     }
   };
@@ -95,9 +97,14 @@ const Login = ({ closeLogin }) => {
 
         <button
           type="submit"
-          className="w-full py-3 bg-yellow-400 text-white font-semibold rounded-lg hover:bg-yellow-500 transition-all"
+          disabled={isLoading}
+          className={`w-full py-3 font-semibold rounded-lg transition-all ${
+            isLoading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-yellow-400 hover:bg-yellow-500 text-white"
+          }`}
         >
-          Login
+          {isLoading ? "Logging in..." : "Login"}
         </button>
       </form>
 

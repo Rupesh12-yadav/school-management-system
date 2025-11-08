@@ -65,30 +65,33 @@ const AttendanceReport = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-8">
+    <div className="min-h-screen  p-4 sm:p-6 md:p-8">
       {/* Toggle Buttons */}
       <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-8">
-        {[
-          { label: "Class Report", value: "class", color: "blue" },
-          { label: "Student Report", value: "student", color: "pink" },
-          { label: "Teacher Report", value: "teacher", color: "indigo" }, // ✅ Added new
-        ].map((btn) => (
-          <button
-            key={btn.value}
-            onClick={() => {
-              setSelectedOption(btn.value);
-              setPercentage(null);
-            }}
-            className={`w-full sm:w-auto px-6 py-2 rounded-lg font-semibold transition ${
-              selectedOption === btn.value
-                ? `bg-${btn.color}-600 text-white shadow-md`
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            {btn.label}
-          </button>
-        ))}
-      </div>
+  {[
+    { label: "Class Report", value: "class", color: "" },
+    { label: "Student Report", value: "student", color: "" },
+    { label: "Teacher Report", value: "teacher", color: "" },
+  ].map((btn) => (
+    <button
+      key={btn.value}
+      onClick={() => {
+        setSelectedOption(btn.value);
+        setPercentage(null);
+      }}
+      style={{
+        background:
+          selectedOption === btn.value ? btn.color : "#2563EB", // gray-200 fallback
+        color: selectedOption === btn.value ? "" : "#FDE047", // gray-700
+        boxShadow: selectedOption === btn.value ? "0 4px 8px rgba(0,0,0,0.1)" : "none",
+      }}
+      className="w-full sm:w-auto px-6 py-2 rounded-lg font-semibold transition hover:bg-gray-300"
+    >
+      {btn.label}
+    </button>
+  ))}
+</div>
+
 
       {/* Report Section */}
       <AnimatePresence mode="wait">
@@ -128,8 +131,8 @@ const AttendanceReport = () => {
                     onClick={() => setFilter(type)}
                     className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
                       filter === type
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-200 hover:bg-gray-300"
+                        ? "bg-[var(--button-primary-text)] text-white"
+                        : " hover:bg-[var( --sidebar-active)]"
                     }`}
                   >
                     {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -151,7 +154,7 @@ const AttendanceReport = () => {
                 <Line
                   type="monotone"
                   dataKey="value"
-                  stroke="#4f46e5"
+                  stroke="var( --text-primary)"
                   strokeWidth={3}
                   dot={{ r: 4 }}
                   activeDot={{ r: 8 }}
@@ -160,16 +163,16 @@ const AttendanceReport = () => {
             </ResponsiveContainer>
 
             {/* Table */}
-            <div className="mt-6 overflow-x-auto">
-              <table className="w-full text-center border-collapse">
-                <thead>
-                  <tr className="bg-blue-100">
+            <div className="mt-6">
+              <table className="min-w-full border border-gray-300 text-center rounded-lg overflow-hidden">
+                <thead style={{background:"var(--gradient-yellow)"}}>
+                  <tr>
                     <th className="border p-2">Day / Period</th>
                     <th className="border p-2">Attendance %</th>
                     <th className="border p-2">Status</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody  className="bg-white text-gray-700">
                   {attendanceData[filter].map((row, index) => (
                     <tr
                       key={index}
@@ -271,7 +274,7 @@ const AttendanceReport = () => {
                     <Line
                       type="monotone"
                       dataKey="value"
-                      stroke="#ec4899"
+                      stroke="#16A34A"
                       strokeWidth={3}
                       dot={{ r: 4 }}
                       activeDot={{ r: 8 }}
