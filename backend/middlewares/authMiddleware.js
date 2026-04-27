@@ -27,7 +27,11 @@ export const protect = async (req, res, next) => {
 
       // 🔐 STEP 2: Token verify kar rahe hain
       // JWT secret key se token ko decode kar rahe hain
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || "supersecretkey123");
+      if (!process.env.JWT_SECRET) {
+        throw new Error("JWT_SECRET is not configured");
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       console.log('🔐 Decoded token:', decoded);
 
       // 👤 STEP 3: User role ke basis par database se user find kar rahe hain

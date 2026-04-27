@@ -48,9 +48,6 @@ mongoose.connect(process.env.MONGO_URI, {
     .then(() => console.log("✅ MongoDB connected"))                    // Success message
     .catch(err => console.error("❌ MongoDB connection error:", err));    // Error message
 
-// JWT Secret key ko console mein print kar rahe hain (debugging ke liye)
-console.log("JWT Secret:", process.env.JWT_SECRET);
-
 // ========== API Routes Setup ==========
 
 // Authentication Routes
